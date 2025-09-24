@@ -1,0 +1,78 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+pip-log.txt
+pip-delete-this-directory.txt
+.tox
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.git
+.mypy_cache
+.pytest_cache
+.hypothesis
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Data directories (will be created at runtime)
+data/
+*.db
+*.sqlite
+*.sqlite3
+chroma/
+*.chroma
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Model cache (will be downloaded during build)
+.cache/
+models/
+*.bin
+*.safetensors
+
+# Documentation builds
+docs/_build/
+site/
+
+# Test files
+test_*.py
+*_test.py
+check_docs.py
+
+# Deployment artifacts
+.railway/
+fly.toml
+
+# Logs
+logs/
+*.log

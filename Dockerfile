@@ -1,5 +1,5 @@
-# Use a more specific Python image tag to avoid registry issues
-FROM python:3.11.9-slim-bookworm
+# Railway-optimized Dockerfile
+FROM python:3.11-slim
 
 # Set working directory
 WORKDIR /app
@@ -48,4 +48,3 @@ HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
 
 # Run the application (bind to PORT if provided by platform)
 CMD ["/bin/sh", "-c", "uvicorn api.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
-
