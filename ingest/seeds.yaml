@@ -1,0 +1,29 @@
+urls:
+  # PyTorch - Updated URLs
+  - https://pytorch.org/docs/stable/data.html
+  - https://pytorch.org/tutorials/intermediate/ddp_tutorial.html
+  - https://pytorch.org/docs/stable/notes/ddp.html
+  - https://pytorch.org/docs/stable/nn.html
+  - https://pytorch.org/tutorials/beginner/basics/data_tutorial.html
+  - https://pytorch.org/docs/stable/distributed.html
+  
+  # MLflow - Updated URLs (fixed redirects)
+  - https://mlflow.org/docs/latest/concepts/
+  - https://mlflow.org/docs/latest/model-registry/
+  - https://mlflow.org/docs/latest/tracking/
+  - https://mlflow.org/docs/latest/models/
+  - https://mlflow.org/docs/latest/getting-started/
+  
+  # KServe - Updated URLs (current version)
+  - https://kserve.github.io/website/latest/get_started/
+  - https://kserve.github.io/website/latest/modelserving/inferenceservice/
+  - https://kserve.github.io/website/latest/modelserving/v1beta1/sklearn/
+  - https://kserve.github.io/website/latest/modelserving/v1beta1/pytorch/
+  - https://kserve.github.io/website/latest/modelserving/v1beta1/triton/
+  
+  # Ray Serve - Updated URLs
+  - https://docs.ray.io/en/latest/serve/key-concepts.html
+  - https://docs.ray.io/en/latest/serve/production-guide/config-file.html
+  - https://docs.ray.io/en/latest/serve/getting-started.html
+  - https://docs.ray.io/en/latest/serve/production-guide/deployment.html
+  - https://docs.ray.io/en/latest/serve/architecture.html

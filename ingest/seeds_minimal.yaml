@@ -1,0 +1,14 @@
+urls:
+  # PyTorch - Core documentation (most reliable)
+  - https://pytorch.org/docs/stable/data.html
+  - https://pytorch.org/docs/stable/nn.html
+  - https://pytorch.org/tutorials/beginner/basics/data_tutorial.html
+  
+  # MLflow - Core documentation
+  - https://mlflow.org/docs/latest/getting-started/
+  - https://mlflow.org/docs/latest/tracking/
+  
+  # Ray Serve - Core documentation
+  - https://docs.ray.io/en/latest/serve/getting-started.html
+  - https://docs.ray.io/en/latest/serve/key-concepts.html
+

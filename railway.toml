@@ -1,0 +1,21 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "docker/Dockerfile.api"
+
+[deploy]
+startCommand = "uvicorn api.main:app --host 0.0.0.0 --port $PORT"
+healthcheckPath = "/health"
+healthcheckTimeout = 100
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
+
+[env]
+DATA_DIR = "/app/data"
+CHROMA_COLLECTION = "ml_docs"
+SQLITE_DB = "bm25.db"
+EMBEDDING_MODEL = "nomic-ai/nomic-embed-text-v1"
+CHUNK_SIZE = "500"
+CHUNK_OVERLAP = "50"
+TOP_K_VECTOR = "10"
+TOP_K_KEYWORD = "10"
+RRF_K = "60"

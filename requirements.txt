@@ -1,0 +1,21 @@
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+python-dotenv
+chromadb
+sqlite-utils
+numpy
+transformers
+accelerate
+torch --extra-index-url https://download.pytorch.org/whl/cpu
+einops
+beautifulsoup4
+readability-lxml
+markdownify
+html5lib
+google-generativeai
+httpx
+pyyaml
+markdown
+docutils
