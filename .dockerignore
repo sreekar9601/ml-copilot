@@ -1,73 +1,63 @@
-# Git
+# VCS & editor
 .git
 .gitignore
-README.md
-DEPLOYMENT.md
-QUICKSTART.md
-implementation.md
+.vscode
+.idea
+*.swp
+*.swo
+.DS_Store
 
 # Python
-__pycache__
+__pycache__/
 *.pyc
 *.pyo
 *.pyd
 .Python
-env
+env/
 pip-log.txt
 pip-delete-this-directory.txt
 .tox
 .coverage
 .coverage.*
-.cache
+.cache/
 nosetests.xml
 coverage.xml
 *.cover
 *.log
-.git
-.mypy_cache
-.pytest_cache
-.hypothesis
+.mypy_cache/
+.pytest_cache/
+.hypothesis/
 
 # Virtual environments
 venv/
 env/
 ENV/
 .venv/
+.poetry/
 
-# Data directories (will be created at runtime)
+# Project dirs not needed to build the API image
+ingest/
+ingestion-service/
+docs/
 data/
+models/
+notebooks/
 *.db
 *.sqlite
 *.sqlite3
+*.parquet
+*.ipynb_checkpoints
 chroma/
 *.chroma
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Model cache (will be downloaded during build)
-.cache/
-models/
-*.bin
-*.safetensors
+# Node / misc
+node_modules/
+dist/
+build/
 
 # Documentation builds
 docs/_build/
 site/
-docs/
 
 # Test files
 test_*.py
@@ -86,8 +76,20 @@ Procfile
 logs/
 *.log
 
-# Ingestion service (not needed for API)
-ingestion-service/
-
 # Management scripts
 run.py
+
+# Documentation files
+README.md
+DEPLOYMENT.md
+QUICKSTART.md
+implementation.md
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
