@@ -1,0 +1,22 @@
+# Heavy Ingestion Service Dependencies
+# All the ML libraries for document processing
+fastapi==0.117.1
+uvicorn[standard]==0.37.0
+pydantic==2.11.9
+pydantic-settings==2.11.0
+python-dotenv==1.1.1
+chromadb==1.1.0
+sqlite-utils==3.38
+numpy==2.3.3
+transformers==4.56.2
+accelerate==1.10.1
+torch==2.8.0
+einops==0.8.1
+beautifulsoup4==4.13.5
+readability-lxml==0.8.4.1
+markdownify==1.2.0
+html5lib==1.1
+httpx==0.28.1
+pyyaml==6.0.2
+markdown==3.9
+docutils==0.22.2

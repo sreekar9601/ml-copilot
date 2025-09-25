@@ -1,6 +1,6 @@
 # ML Documentation Copilot
 
-An AI-powered assistant for ML infrastructure documentation, specializing in PyTorch, MLflow, Ray Serve, and KServe. The system uses a hybrid retrieval approach (semantic + keyword search) with strict citation requirements to provide accurate, source-backed answers.
+An AI-powered assistant for ML infrastructure documentation, specializing in PyTorch, MLflow, Ray Serve, and KServe. The system uses a **two-service architecture** with a lightweight API service and separate ingestion service for optimal performance.
 
 ## Features
 
@@ -13,14 +13,22 @@ An AI-powered assistant for ML infrastructure documentation, specializing in PyT
 
 ## Architecture
 
-### Technology Stack
+### Two-Service Design
 
+#### 🚀 API Service (Lightweight)
 - **Backend**: FastAPI (Python 3.11)
 - **LLM**: Google Gemini 1.5 Flash
-- **Embeddings**: Nomic AI nomic-embed-text-v1 (local)
 - **Vector DB**: ChromaDB (persistent, file-based)
 - **Keyword Search**: SQLite FTS5
-- **Deployment**: Docker + Fly.io
+- **Deployment**: Railway with Nixpacks
+- **Dependencies**: Only essential libraries (FastAPI, ChromaDB, Google AI)
+
+#### ⚙️ Ingestion Service (Heavy)
+- **ML Libraries**: PyTorch, Transformers, Accelerate
+- **Embeddings**: Nomic AI nomic-embed-text-v1 (local)
+- **Processing**: Document chunking, embedding generation
+- **Usage**: Run manually when adding new documentation
+- **Output**: Vector embeddings and search indices for API service
 
 ### Data Flow
 
