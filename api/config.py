@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     # Qdrant (managed vector DB)
     qdrant_url: str | None = Field(default=None, env="QDRANT_URL")
     qdrant_api_key: str | None = Field(default=None, env="QDRANT_API_KEY")
-    qdrant_collection_name: str = Field(default="ml_docs", env="QDRANT_COLLECTION")
+    qdrant_collection_name: str = Field(default="ml-docs-copilot", env="QDRANT_COLLECTION")
     
     # Data storage
     data_dir: Path = Field(default=Path("./data"), env="DATA_DIR")
