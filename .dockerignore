@@ -1,6 +1,10 @@
 # Git
 .git
 .gitignore
+README.md
+DEPLOYMENT.md
+QUICKSTART.md
+implementation.md
 
 # Python
 __pycache__
@@ -63,6 +67,7 @@ models/
 # Documentation builds
 docs/_build/
 site/
+docs/
 
 # Test files
 test_*.py
@@ -72,7 +77,17 @@ check_docs.py
 # Deployment artifacts
 .railway/
 fly.toml
+railway.json
+railway.toml
+nixpacks.toml
+Procfile
 
 # Logs
 logs/
 *.log
+
+# Ingestion service (not needed for API)
+ingestion-service/
+
+# Management scripts
+run.py

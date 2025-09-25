@@ -1,30 +1,31 @@
-# Lightweight API Service Dockerfile
-FROM mcr.microsoft.com/vscode/devcontainers/python:3.11
+# Optimized Lightweight API Service Dockerfile
+FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install system dependencies
+# Install only essential system dependencies
 RUN apt-get update && apt-get install -y \
-    build-essential \
     curl \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
 
-# Copy requirements and install dependencies
+# Copy requirements and install dependencies with optimizations
 COPY requirements-api.txt .
-RUN pip install --no-cache-dir -r requirements-api.txt
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r requirements-api.txt \
+    && pip cache purge
 
 # Create data directory
 RUN mkdir -p /app/data
 
-# Copy application code
+# Copy only necessary application code (remove ingest for API service)
 COPY ./api /app/api
-COPY ./ingest /app/ingest
 
 # Expose port
 EXPOSE 8000
 
-# Health check - more lenient for initial deployment
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=5 \
+# Simple health check
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=2 \
     CMD curl -f http://localhost:8000/health || exit 1
 
 # Run the application
