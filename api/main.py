@@ -2,11 +2,15 @@
 
 import logging
 import time
+import os
 from typing import List, Dict, Any, Optional
 from pathlib import Path
+from collections import defaultdict
+from datetime import datetime, timedelta
 
-from fastapi import FastAPI, HTTPException, Query, BackgroundTasks
+from fastapi import FastAPI, HTTPException, Query, BackgroundTasks, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from pydantic import BaseModel, Field
 import google.generativeai as genai
 
@@ -35,14 +39,53 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Add CORS middleware
+# Security middleware
+app.add_middleware(
+    TrustedHostMiddleware, 
+    allowed_hosts=os.getenv("ALLOWED_HOSTS", "*").split(",")
+)
+
+# CORS middleware with production-safe settings
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "").split(",") if os.getenv("ALLOWED_ORIGINS") else ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Configure appropriately for production
+    allow_origins=allowed_origins,  # Configure via ALLOWED_ORIGINS env var
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST"],  # Only allow needed methods
+    allow_headers=["Content-Type", "Authorization", "X-Requested-With"],  # Specific headers only
 )
+
+# Simple rate limiting (in-memory, suitable for single instance)
+rate_limit_storage = defaultdict(list)
+RATE_LIMIT_REQUESTS = int(os.getenv("RATE_LIMIT_REQUESTS", "60"))  # requests per minute
+RATE_LIMIT_WINDOW = int(os.getenv("RATE_LIMIT_WINDOW", "60"))  # seconds
+
+@app.middleware("http")
+async def rate_limit_middleware(request: Request, call_next):
+    """Simple rate limiting middleware."""
+    client_ip = request.client.host
+    current_time = datetime.now()
+    
+    # Clean old requests outside the window
+    cutoff_time = current_time - timedelta(seconds=RATE_LIMIT_WINDOW)
+    rate_limit_storage[client_ip] = [
+        req_time for req_time in rate_limit_storage[client_ip] 
+        if req_time > cutoff_time
+    ]
+    
+    # Check if rate limit exceeded
+    if len(rate_limit_storage[client_ip]) >= RATE_LIMIT_REQUESTS:
+        return JSONResponse(
+            status_code=429,
+            content={"error": "Rate limit exceeded. Please try again later."}
+        )
+    
+    # Add current request
+    rate_limit_storage[client_ip].append(current_time)
+    
+    response = await call_next(request)
+    return response
 
 # Add startup event
 @app.on_event("startup")
