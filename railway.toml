@@ -11,6 +11,7 @@ restartPolicyMaxRetries = 3
 [env]
 DATA_DIR = "/app/data"
 QDRANT_COLLECTION = "ml-docs-copilot"
+CHROMA_COLLECTION = "ml-docs-copilot"
 SQLITE_DB = "bm25.db"
 EMBEDDING_MODEL = "nomic-ai/nomic-embed-text-v1"
 CHUNK_SIZE = "500"
