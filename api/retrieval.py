@@ -78,8 +78,16 @@ class HybridRetriever:
     def _get_embedder(self):
         """Lazy initialization of embedder."""
         if self.embedder is None:
-            from ingest.embedder import CachedEmbedder
-            self.embedder = CachedEmbedder(settings.embedding_model)
+            try:
+                # Try lightweight embedder first (for API service)
+                from .lightweight_embedder import LightweightEmbedder
+                self.embedder = LightweightEmbedder("text-embedding-004")
+                logger.info("Using lightweight Google Cloud Vertex AI embedder")
+            except ImportError:
+                # Fallback to heavy embedder (for ingestion service)
+                from ingest.embedder import CachedEmbedder
+                self.embedder = CachedEmbedder(settings.embedding_model)
+                logger.info("Using heavy local embedder")
         return self.embedder
     
     def vector_search(self, query: str, top_k: int = 10) -> List[RetrievalResult]:
@@ -89,7 +97,7 @@ class HybridRetriever:
             return []
         
         try:
-            # Generate query embedding
+            # Generate query embedding using lightweight embedder
             embedder = self._get_embedder()
             query_embedding = embedder.encode_query(query)
             
@@ -195,7 +203,8 @@ class HybridRetriever:
         
         # Normalize and remove special characters that break MATCH
         cleaned = query.lower()
-        cleaned = re.sub(r'[\p{P}\p{S}]', ' ', cleaned) if hasattr(re, 'UNICODE') else re.sub(r'[^\w\s-]', ' ', cleaned)
+        # Use simple regex that works in all Python versions
+        cleaned = re.sub(r'[^\w\s-]', ' ', cleaned)
         cleaned = re.sub(r'\s+', ' ', cleaned).strip()
         
         # Split into terms and add prefix matching for meaningful tokens

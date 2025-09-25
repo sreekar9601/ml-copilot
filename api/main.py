@@ -11,12 +11,19 @@ from pydantic import BaseModel, Field
 import google.generativeai as genai
 
 from .config import settings
-from .retrieval import retrieve_documents, RetrievalResult
+# Import retrieval modules lazily to avoid startup failures
+# from .retrieval import retrieve_documents, RetrievalResult
 from .prompts import SYSTEM_PROMPT, CONTEXT_CHUNK_TEMPLATE
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Add startup logging
+logger.info("Starting ML Documentation Copilot API...")
+logger.info(f"Data directory: {settings.data_dir}")
+logger.info(f"ChromaDB collection: {settings.chroma_collection}")
+logger.info(f"SQLite database: {settings.sqlite_db}")
 
 # Configure Gemini
 genai.configure(api_key=settings.google_api_key)
@@ -36,6 +43,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Add startup event
+@app.on_event("startup")
+async def startup_event():
+    logger.info("🚀 ML Documentation Copilot API is ready!")
+    logger.info("📊 Available endpoints:")
+    logger.info("  - GET  /health - Health check")
+    logger.info("  - POST /ask - Ask questions")
+    logger.info("  - GET  /stats - Database statistics")
 
 
 # Pydantic models
@@ -99,7 +115,7 @@ def get_gemini_model():
     return gemini_model
 
 
-def format_context_chunks(results: List[RetrievalResult]) -> str:
+def format_context_chunks(results: List[Any]) -> str:
     """Format retrieval results into context chunks for the prompt."""
     context_chunks = []
     
@@ -193,6 +209,9 @@ async def ask_question(request: QueryRequest):
         raise HTTPException(status_code=400, detail="Query cannot be empty")
     
     try:
+        # Import retrieval modules lazily
+        from .retrieval import retrieve_documents, RetrievalResult
+        
         # Retrieve relevant documents
         retrieval_start = time.time()
         results = retrieve_documents(request.q, top_k=request.top_k)
