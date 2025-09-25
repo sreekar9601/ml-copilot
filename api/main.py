@@ -3,6 +3,7 @@
 import logging
 import time
 import os
+import platform
 from typing import List, Dict, Any, Optional
 from pathlib import Path
 from collections import defaultdict
@@ -201,6 +202,18 @@ def generate_answer(query: str, context_chunks: str) -> str:
 async def health_check():
     """Simple health check endpoint that always returns 200 OK."""
     return {"status": "healthy", "message": "API service is running"}
+
+@app.get("/debug")
+async def debug_info():
+    """Debug endpoint to check environment variables."""
+    import os
+    return {
+        "status": "debug",
+        "port_env": os.getenv("PORT", "not_set"),
+        "host": "0.0.0.0",
+        "python_version": f"{platform.python_version()}",
+        "working_dir": str(Path.cwd())
+    }
 
 @app.get("/health-detailed", response_model=HealthResponse)
 async def health_check_detailed():
