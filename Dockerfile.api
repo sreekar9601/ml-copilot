@@ -34,4 +34,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 
 # Expose & default start
 EXPOSE 8000
+
+# Explicitly set the entrypoint to override any Railway service settings
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+CMD []

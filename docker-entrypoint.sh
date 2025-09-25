@@ -4,6 +4,8 @@ set -e
 # Debug environment variables
 echo "=== Railway Deployment Debug ==="
 echo "PORT: ${PORT:-not_set}"
+echo "RAILWAY_PUBLIC_DOMAIN: ${RAILWAY_PUBLIC_DOMAIN:-not_set}"
+echo "RAILWAY_STATIC_URL: ${RAILWAY_STATIC_URL:-not_set}"
 echo "HOST: 0.0.0.0"
 echo "PWD: $(pwd)"
 echo "Python version: $(python --version)"
