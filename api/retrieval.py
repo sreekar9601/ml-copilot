@@ -7,6 +7,8 @@ from typing import List, Dict, Any, Optional, Tuple
 import numpy as np
 import chromadb
 from chromadb.config import Settings
+from qdrant_client import QdrantClient
+from qdrant_client.http.models import Filter as QdrantFilter  # noqa: F401 (placeholder)
 
 from .config import settings
 
@@ -44,19 +46,33 @@ class HybridRetriever:
     def _initialize_connections(self) -> None:
         """Initialize database connections."""
         try:
-            # Initialize ChromaDB
-            chroma_path = self.data_dir / "chroma"
-            self.chroma_client = chromadb.PersistentClient(
-                path=str(chroma_path),
-                settings=Settings(anonymized_telemetry=False)
-            )
-            
-            try:
-                self.collection = self.chroma_client.get_collection(settings.chroma_collection)
-                logger.info(f"Connected to ChromaDB collection: {settings.chroma_collection}")
-            except Exception:
-                logger.warning(f"ChromaDB collection {settings.chroma_collection} not found")
-                self.collection = None
+            # Prefer Qdrant Cloud if configured; else fall back to Chroma local
+            self.qdrant_client = None
+            self.use_qdrant = bool(settings.qdrant_url and settings.qdrant_api_key)
+
+            if self.use_qdrant:
+                try:
+                    self.qdrant_client = QdrantClient(
+                        url=settings.qdrant_url,
+                        api_key=settings.qdrant_api_key,
+                    )
+                    logger.info("Connected to Qdrant Cloud")
+                except Exception as e:
+                    logger.error(f"Failed to connect to Qdrant: {e}")
+                    self.use_qdrant = False
+
+            if not self.use_qdrant:
+                chroma_path = self.data_dir / "chroma"
+                self.chroma_client = chromadb.PersistentClient(
+                    path=str(chroma_path),
+                    settings=Settings(anonymized_telemetry=False)
+                )
+                try:
+                    self.collection = self.chroma_client.get_collection(settings.chroma_collection)
+                    logger.info(f"Connected to ChromaDB collection: {settings.chroma_collection}")
+                except Exception:
+                    logger.warning(f"ChromaDB collection {settings.chroma_collection} not found")
+                    self.collection = None
             
             # Initialize SQLite
             sqlite_path = self.data_dir / settings.sqlite_db
@@ -91,24 +107,48 @@ class HybridRetriever:
         return self.embedder
     
     def vector_search(self, query: str, top_k: int = 10) -> List[RetrievalResult]:
-        """Perform vector similarity search using ChromaDB."""
-        if not self.collection:
-            logger.warning("ChromaDB collection not available for vector search")
-            return []
-        
+        """Perform vector similarity search using Qdrant (if configured) or ChromaDB."""
         try:
-            # Generate query embedding using lightweight embedder
+            # Generate query embedding
             embedder = self._get_embedder()
             query_embedding = embedder.encode_query(query)
-            
-            # Search in ChromaDB
+
+            if self.use_qdrant and self.qdrant_client is not None:
+                # Qdrant search
+                hits = self.qdrant_client.search(
+                    collection_name=settings.qdrant_collection_name,
+                    query_vector=query_embedding.tolist(),
+                    limit=top_k,
+                    with_payload=True,
+                )
+                retrieval_results: List[RetrievalResult] = []
+                for idx, hit in enumerate(hits):
+                    payload = hit.payload or {}
+                    metadata = payload.get("metadata", {})
+                    content = payload.get("text", "")
+                    chunk_id = str(hit.id)
+                    retrieval_results.append(
+                        RetrievalResult(
+                            chunk_id=chunk_id,
+                            content=content,
+                            metadata=metadata,
+                            score=float(hit.score),
+                            rank=idx + 1,
+                        )
+                    )
+                return retrieval_results
+
+            # Fallback: ChromaDB local
+            if not self.collection:
+                logger.warning("ChromaDB collection not available for vector search")
+                return []
+
             results = self.collection.query(
                 query_embeddings=[query_embedding.tolist()],
                 n_results=top_k,
                 include=['documents', 'metadatas', 'distances']
             )
-            
-            # Convert to RetrievalResult objects
+
             retrieval_results = []
             if results['ids'] and results['ids'][0]:
                 for i, (chunk_id, document, metadata, distance) in enumerate(zip(
@@ -117,9 +157,7 @@ class HybridRetriever:
                     results['metadatas'][0],
                     results['distances'][0]
                 )):
-                    # Convert distance to similarity score (ChromaDB uses L2 distance)
                     similarity = 1 / (1 + distance)
-                    
                     retrieval_results.append(RetrievalResult(
                         chunk_id=chunk_id,
                         content=document,
@@ -127,10 +165,8 @@ class HybridRetriever:
                         score=similarity,
                         rank=i + 1
                     ))
-            
-            logger.debug(f"Vector search returned {len(retrieval_results)} results")
             return retrieval_results
-            
+
         except Exception as e:
             logger.error(f"Error in vector search: {e}")
             return []

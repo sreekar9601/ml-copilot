@@ -9,7 +9,7 @@ An AI-powered assistant for ML infrastructure documentation, specializing in PyT
 - 🎯 **Strict Citations**: Every factual statement is backed by source citations
 - 🚀 **Fast API**: Built with FastAPI for high-performance REST endpoints
 - 🐳 **Docker Ready**: Containerized for easy deployment
-- ☁️ **Cloud Deploy**: Configured for Fly.io deployment with persistent storage
+- ☁️ **Cloud Deploy**: Railway + Qdrant Cloud deployment ready
 
 ## Architecture
 
@@ -18,14 +18,14 @@ An AI-powered assistant for ML infrastructure documentation, specializing in PyT
 #### 🚀 API Service (Lightweight)
 - **Backend**: FastAPI (Python 3.11)
 - **LLM**: Google Gemini 1.5 Flash
-- **Vector DB**: ChromaDB (persistent, file-based)
+- **Vector DB**: Qdrant Cloud (production) / ChromaDB (development)
 - **Keyword Search**: SQLite FTS5
-- **Deployment**: Railway with Nixpacks
+- **Deployment**: Railway with Docker
 - **Dependencies**: Only essential libraries (FastAPI, ChromaDB, Google AI)
 
 #### ⚙️ Ingestion Service (Heavy)
 - **ML Libraries**: PyTorch, Transformers, Accelerate
-- **Embeddings**: Nomic AI nomic-embed-text-v1 (local)
+- **Embeddings**: Nomic AI nomic-embed-text-v1 (ingestion) / Google Vertex AI (API)
 - **Processing**: Document chunking, embedding generation
 - **Usage**: Run manually when adding new documentation
 - **Output**: Vector embeddings and search indices for API service
@@ -124,42 +124,41 @@ An AI-powered assistant for ML infrastructure documentation, specializing in PyT
 
 ## Deployment
 
-### Fly.io Deployment
+### Railway + Qdrant Cloud (Recommended)
 
-1. **Install Fly CLI**
+For production deployment, see **[RAILWAY_DEPLOYMENT.md](./RAILWAY_DEPLOYMENT.md)** for complete setup guide.
+
+**Quick Setup:**
+1. **Create Qdrant Cloud cluster** (free tier: 1GB)
+2. **Get Google Gemini API key** from [ai.google.dev](https://ai.google.dev)
+3. **Deploy to Railway** with environment variables
+4. **Run ingestion** to populate Qdrant with documentation
+
+### Local Development
+
+1. **Copy environment template**
    ```bash
-   # Follow instructions at https://fly.io/docs/hands-on/install-flyctl/
+   cp env.example .env
+   # Edit .env with your actual API keys
    ```
 
-2. **Deploy Application**
+2. **Run ingestion locally**
    ```bash
-   # Launch app (don't deploy yet)
-   fly launch --name ml-docs-copilot --no-deploy
-   
-   # Create persistent volume for data
-   fly volumes create vectordata --size 3 --region sjc
-   
-   # Set API key secret
-   fly secrets set GOOGLE_API_KEY="your_google_api_key_here"
-   
-   # Deploy
-   fly deploy
+   python ingest/ingest_focused_web.py
    ```
 
-3. **Initialize Data**
+3. **Start API server**
    ```bash
-   # SSH into the deployed app and run ingestion
-   fly ssh console
-   python -m ingest.main --clear
+   uvicorn api.main:app --reload --port 8000
    ```
 
 ### Production Considerations
 
-- **Volume Size**: Start with 3GB, monitor usage and scale as needed
-- **Memory**: 2GB RAM recommended for embedding model
-- **Auto-scaling**: Configure based on expected traffic
-- **Monitoring**: Use Fly.io metrics or add external monitoring
-- **API Rate Limits**: Consider implementing rate limiting for production use
+- **Qdrant Storage**: Free tier provides 1GB (330k vectors)
+- **Railway Scaling**: Auto-scales based on traffic
+- **API Rate Limits**: Consider implementing for public deployment
+- **Monitoring**: Use Railway metrics and Qdrant Cloud dashboard
+- **Security**: Store API keys securely in Railway environment variables
 
 ## Configuration
 

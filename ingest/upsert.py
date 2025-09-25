@@ -1,11 +1,14 @@
 """Database upsert module for storing chunks in ChromaDB and SQLite FTS5."""
 
 import logging
+import os
 import sqlite3
 from pathlib import Path
 from typing import List, Dict, Any
 import chromadb
 from chromadb.config import Settings
+from qdrant_client import QdrantClient
+from qdrant_client.http import models as qmodels
 import numpy as np
 
 from .chunker import DocumentChunk
@@ -15,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 class DatabaseManager:
-    """Manages ChromaDB and SQLite databases for the RAG system."""
+    """Manages vector DB (Qdrant or ChromaDB) and SQLite for the RAG system."""
     
     def __init__(self, data_dir: Path, collection_name: str = "ml_docs", 
                  sqlite_db: str = "bm25.db"):
@@ -62,6 +65,18 @@ class DatabaseManager:
         except Exception as e:
             logger.error(f"Error initializing ChromaDB: {e}")
             raise
+
+    def initialize_qdrant(self, url: str, api_key: str, collection_name: str, vector_size: int) -> QdrantClient:
+        """Initialize Qdrant Cloud client and ensure collection exists."""
+        client = QdrantClient(url=url, api_key=api_key)
+        try:
+            client.get_collection(collection_name)
+        except Exception:
+            client.recreate_collection(
+                collection_name=collection_name,
+                vectors_config=qmodels.VectorParams(size=vector_size, distance=qmodels.Distance.COSINE),
+            )
+        return client
     
     def initialize_sqlite(self) -> None:
         """Initialize SQLite database with FTS5 table."""
@@ -131,7 +146,7 @@ class DatabaseManager:
     
     def _upsert_batch(self, chunks: List[DocumentChunk]) -> None:
         """Upsert a batch of chunks."""
-        # Prepare data for ChromaDB
+        # Prepare data common to vector DB
         chunk_ids = [chunk.chunk_id for chunk in chunks]
         contents = [chunk.content for chunk in chunks]
         metadatas = []
@@ -152,18 +167,45 @@ class DatabaseManager:
         logger.debug(f"Generating embeddings for batch of {len(chunks)} chunks")
         embeddings = self.embedder.encode_batch(contents)
         
-        # Upsert to ChromaDB
-        try:
-            self.collection.upsert(
-                ids=chunk_ids,
-                embeddings=embeddings.tolist(),
-                metadatas=metadatas,
-                documents=contents
-            )
-            logger.debug(f"Upserted {len(chunks)} chunks to ChromaDB")
-        except Exception as e:
-            logger.error(f"Error upserting to ChromaDB: {e}")
-            raise
+        # Upsert to vector DB (prefer Qdrant if configured via env)
+        use_qdrant = bool(os.getenv("QDRANT_URL") and os.getenv("QDRANT_API_KEY"))
+        if use_qdrant:
+            try:
+                client = self.initialize_qdrant(
+                    url=os.getenv("QDRANT_URL"),
+                    api_key=os.getenv("QDRANT_API_KEY"),
+                    collection_name=os.getenv("QDRANT_COLLECTION", self.collection_name),
+                    vector_size=len(embeddings[0]) if len(embeddings) > 0 else 768,
+                )
+                points = [
+                    qmodels.PointStruct(
+                        id=chunk_ids[i],
+                        vector=embeddings[i].tolist(),
+                        payload={
+                            "text": contents[i],
+                            "metadata": metadatas[i],
+                        },
+                    )
+                    for i in range(len(chunk_ids))
+                ]
+                client.upsert(collection_name=os.getenv("QDRANT_COLLECTION", self.collection_name), points=points, wait=True)
+                logger.debug(f"Upserted {len(chunks)} chunks to Qdrant")
+            except Exception as e:
+                logger.error(f"Error upserting to Qdrant: {e}")
+                raise
+        else:
+            # Upsert to ChromaDB
+            try:
+                self.collection.upsert(
+                    ids=chunk_ids,
+                    embeddings=embeddings.tolist(),
+                    metadatas=metadatas,
+                    documents=contents
+                )
+                logger.debug(f"Upserted {len(chunks)} chunks to ChromaDB")
+            except Exception as e:
+                logger.error(f"Error upserting to ChromaDB: {e}")
+                raise
         
         # Upsert to SQLite
         try:
