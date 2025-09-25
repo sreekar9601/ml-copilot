@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 class FocusedMLScraper:
     """High-value ML documentation scraper optimized for Qdrant Cloud free tier."""
     
-    def __init__(self, max_pages_per_source: int = 50, delay_seconds: float = 1.0):
+    def __init__(self, max_pages_per_source: int = 200, delay_seconds: float = 0.5):
         self.max_pages_per_source = max_pages_per_source
         self.delay_seconds = delay_seconds
         self.scraped_urls: Set[str] = set()
