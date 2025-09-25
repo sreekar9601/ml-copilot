@@ -4,6 +4,7 @@ uvicorn[standard]==0.37.0
 pydantic==2.11.9
 pydantic-settings==2.11.0
 python-dotenv==1.1.1
+chromadb==1.1.0
 sqlite-utils==3.38
 google-generativeai==0.8.5
 httpx==0.28.1
