@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     sqlite_db: str = Field(default="bm25.db", env="SQLITE_DB")
     
     # Model settings
-    embedding_model: str = Field(default="nomic-ai/nomic-embed-text-v1", env="EMBEDDING_MODEL")
+    embedding_model: str = Field(default="gemini-embedding-001", env="EMBEDDING_MODEL")
     
     # Chunking settings
     chunk_size: int = Field(default=500, env="CHUNK_SIZE")
@@ -37,6 +37,7 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
+        extra = "ignore"  # Ignore extra environment variables
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

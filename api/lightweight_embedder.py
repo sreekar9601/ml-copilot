@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 class LightweightEmbedder:
     """Lightweight embedder using Google Generative AI embeddings."""
     
-    def __init__(self, model_name: str = "models/text-embedding-004"):
+    def __init__(self, model_name: str = "gemini-embedding-001"):
         self.model_name = model_name
         # Configure API key
         genai.configure(api_key=settings.google_api_key)
