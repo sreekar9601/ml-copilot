@@ -14,7 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from pydantic import BaseModel, Field
 # IMPORTANT: Import clients module first to ensure configuration runs
-from .clients import GENERATION_MODEL
+from .clients import get_generation_model, GENERATION_MODEL_NAME
 from .config import settings
 # Import retrieval modules lazily to avoid startup failures
 # from .retrieval import retrieve_documents, RetrievalResult
@@ -151,7 +151,7 @@ class ReindexRequest(BaseModel):
 
 def get_gemini_model():
     """Get the pre-configured Gemini model instance."""
-    return GENERATION_MODEL
+    return get_generation_model()
 
 
 def format_context_chunks(results: List[Any]) -> str:
@@ -173,14 +173,18 @@ def format_context_chunks(results: List[Any]) -> str:
 def generate_answer(query: str, context_chunks: str) -> str:
     """Generate answer using Gemini."""
     try:
-        model = get_gemini_model()
+        client = get_gemini_model()  # This now returns the client
         
         prompt = SYSTEM_PROMPT.format(
             context_chunks=context_chunks,
             user_question=query
         )
         
-        response = model.generate_content(prompt)
+        # Generate response using the new API
+        response = client.models.generate_content(
+            model=GENERATION_MODEL_NAME,
+            contents=prompt
+        )
         
         if response.text:
             return response.text
@@ -212,11 +216,12 @@ async def debug_info():
         "working_dir": str(Path.cwd()),
         "google_api_key_prefix": api_key_prefix,
         "gemini_model": "gemini-1.5-flash",
-        "transport": "rest",
+        "authentication": "vertex_ai",
         "vertex_env_vars": {
-            "AIPLATFORM_ENDPOINT": os.getenv("AIPLATFORM_ENDPOINT", "not_set"),
-            "VERTEXAI_ENDPOINT": os.getenv("VERTEXAI_ENDPOINT", "not_set"),
-            "GOOGLE_CLOUD_PROJECT": os.getenv("GOOGLE_CLOUD_PROJECT", "not_set")
+            "GOOGLE_CLOUD_PROJECT": os.getenv("GOOGLE_CLOUD_PROJECT", "not_set"),
+            "GOOGLE_CLOUD_LOCATION": os.getenv("GOOGLE_CLOUD_LOCATION", "not_set"),
+            "GOOGLE_GENAI_USE_VERTEXAI": os.getenv("GOOGLE_GENAI_USE_VERTEXAI", "not_set"),
+            "GOOGLE_APPLICATION_CREDENTIALS": os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "not_set")
         }
     }
 

@@ -1,41 +1,50 @@
-"""Centralized Google AI client configuration and model instances.
+"""Centralized Google AI client configuration for Vertex AI.
 
+This module uses the new google-genai SDK with Vertex AI authentication.
 """
 
-import google.generativeai as genai
-import os
 import logging
+from google import genai
 
 logger = logging.getLogger(__name__)
 
-# This code runs ONLY ONCE when this module is first imported.
-# This guarantees configuration happens before any client is used.
+logger.info("--- Initializing Vertex AI Clients via Environment ---")
 
-logger.info("--- Centralized Client Initialization ---")
-logger.info("--- Configuring Google AI Client with REST transport ---")
-
-# Perform the crucial configuration here
-genai.configure(
-    api_key=os.environ["GOOGLE_API_KEY"],
-    transport='rest'  # Force REST API to prevent Vertex AI routing
-)
-
-
-# Instance for Text Generation
-GENERATION_MODEL = genai.GenerativeModel(
-    "gemini-1.5-flash",
-    generation_config={
-        "temperature": 0.1,
-        "top_p": 0.9,
-        "max_output_tokens": 2048,
-    }
-)
-
-# Instance for Embeddings
-# The new SDK uses genai.embed_content, not a separate model object
-# But let's keep the model name for clarity if your embedder uses it.
+# Define model names centrally
+GENERATION_MODEL_NAME = "gemini-1.5-flash"
 EMBEDDING_MODEL_NAME = "gemini-embedding-001"
 
-logger.info(f"✅ Generation Model ('{GENERATION_MODEL.model_name}') is ready.")
-logger.info(f"✅ Embedding Model ('{EMBEDDING_MODEL_NAME}') is configured.")
-logger.info("--- Google AI Client Configuration Complete ---")
+# Create a shared client instance
+_client = None
+
+def get_client():
+    """Get or create the shared client instance."""
+    global _client
+    if _client is None:
+        _client = genai.Client()
+        logger.info("✅ Vertex AI client created")
+    return _client
+
+def get_generation_model():
+    """Returns the client for generation tasks."""
+    return get_client()
+
+def embed_content(texts: list[str], task_type: str = "RETRIEVAL_DOCUMENT", title: str = None) -> list[list[float]]:
+    """A wrapper for the embed_content API call."""
+    logger.info(f"Embedding {len(texts)} chunks using model {EMBEDDING_MODEL_NAME} for task: {task_type}")
+    
+    client = get_client()
+    
+    # Use the client's models.embed_content method
+    response = client.models.embed_content(
+        model=EMBEDDING_MODEL_NAME,
+        content=texts,
+        task_type=task_type,
+        title=title
+    )
+    
+    # Extract embeddings from response
+    return [embedding.values for embedding in response.embeddings]
+
+logger.info(f"✅ Generation Model ('{GENERATION_MODEL_NAME}') is ready to be used.")
+logger.info(f"✅ Embedding Model ('{EMBEDDING_MODEL_NAME}') is ready to be used.")

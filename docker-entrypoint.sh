@@ -1,14 +1,22 @@
 #!/bin/bash
 set -e
 
-# Purge any Vertex AI environment variables that might interfere with Studio API
-unset AIPLATFORM_ENDPOINT
-unset VERTEXAI_ENDPOINT
-unset GOOGLE_CLOUD_PROJECT
-unset GOOGLE_APPLICATION_CREDENTIALS
+# This script sets up the environment for the application to run.
+
+echo "=== Railway Deployment Debug ==="
+
+# Create the Google Credentials file from the environment variable
+# This is the standard way to handle JSON credentials in containerized environments
+if [ -n "$GOOGLE_APPLICATION_CREDENTIALS_JSON" ]; then
+  echo "Found GOOGLE_APPLICATION_CREDENTIALS_JSON, creating credentials file..."
+  echo "$GOOGLE_APPLICATION_CREDENTIALS_JSON" > /app/gcp-credentials.json
+  export GOOGLE_APPLICATION_CREDENTIALS=/app/gcp-credentials.json
+  echo "✅ Google credentials file created at /app/gcp-credentials.json"
+else
+  echo "WARNING: GOOGLE_APPLICATION_CREDENTIALS_JSON not set."
+fi
 
 # Debug environment variables
-echo "=== Railway Deployment Debug ==="
 echo "PORT: ${PORT:-not_set}"
 echo "RAILWAY_PUBLIC_DOMAIN: ${RAILWAY_PUBLIC_DOMAIN:-not_set}"
 echo "RAILWAY_STATIC_URL: ${RAILWAY_STATIC_URL:-not_set}"
@@ -16,13 +24,10 @@ echo "HOST: 0.0.0.0"
 echo "PWD: $(pwd)"
 echo "Python version: $(python --version)"
 echo "Uvicorn version: $(uvicorn --version)"
-echo "Google API Key prefix: ${GOOGLE_API_KEY:0:8}..."
-echo "Vertex env vars (should be unset):"
-echo "  AIPLATFORM_ENDPOINT: ${AIPLATFORM_ENDPOINT:-unset}"
-echo "  VERTEXAI_ENDPOINT: ${VERTEXAI_ENDPOINT:-unset}"
-echo "  GOOGLE_CLOUD_PROJECT: ${GOOGLE_CLOUD_PROJECT:-unset}"
-echo "All env vars:"
-env | grep -E "(PORT|RAILWAY|GOOGLE)" || echo "No relevant vars found"
+echo "GOOGLE_CLOUD_PROJECT: ${GOOGLE_CLOUD_PROJECT:-not_set}"
+echo "GOOGLE_CLOUD_LOCATION: ${GOOGLE_CLOUD_LOCATION:-not_set}"
+echo "GOOGLE_GENAI_USE_VERTEXAI: ${GOOGLE_GENAI_USE_VERTEXAI:-not_set}"
+echo "GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-not_set}"
 echo "================================"
 
 # Use PORT if set, otherwise default to 8000

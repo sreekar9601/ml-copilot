@@ -3,7 +3,6 @@
 import logging
 import numpy as np
 from typing import List, Union
-import google.generativeai as genai
 from . import clients  # This ensures clients.py is imported and configured
 from .config import settings
 
@@ -22,34 +21,22 @@ class LightweightEmbedder:
     def encode_query(self, text: str) -> np.ndarray:
         """Encode a single query text into embedding vector."""
         try:
-            # Use Google's embedding model
-            result = genai.embed_content(
-                model=self.model_name,
-                content=text,
-                task_type="retrieval_query"
-            )
-            return np.array(result['embedding'])
+            embeddings = clients.embed_content(texts=[text], task_type="RETRIEVAL_QUERY")
+            return np.array(embeddings[0])
         except Exception as e:
             logger.error(f"Error encoding query: {e}")
-            # Return a zero vector as fallback
-            return np.zeros(768)
+            # Return a zero vector as fallback (gemini-embedding-001 has 3072 dims)
+            return np.zeros(3072)
     
     def encode_documents(self, texts: List[str]) -> List[np.ndarray]:
         """Encode multiple document texts into embedding vectors."""
         try:
-            embeddings = []
-            for text in texts:
-                result = genai.embed_content(
-                    model=self.model_name,
-                    content=text,
-                    task_type="retrieval_document"
-                )
-                embeddings.append(np.array(result['embedding']))
-            return embeddings
+            embeddings = clients.embed_content(texts=texts, task_type="RETRIEVAL_DOCUMENT")
+            return [np.array(e) for e in embeddings]
         except Exception as e:
             logger.error(f"Error encoding documents: {e}")
-            # Return zero vectors as fallback
-            return [np.zeros(768) for _ in texts]
+            # Return zero vectors as fallback (gemini-embedding-001 has 3072 dims)
+            return [np.zeros(3072) for _ in texts]
     
     def encode(self, text: str) -> np.ndarray:
         """Generic encode method for backward compatibility."""
