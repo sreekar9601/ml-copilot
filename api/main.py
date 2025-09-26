@@ -180,7 +180,7 @@ def generate_answer(query: str, context_chunks: str) -> str:
             user_question=query
         )
         
-        # Generate response using unified SDK
+        # Generate response using Vertex AI
         response = client.models.generate_content(
             model=GENERATION_MODEL_NAME,
             contents=prompt
@@ -215,8 +215,8 @@ async def debug_info():
         "python_version": f"{platform.python_version()}",
         "working_dir": str(Path.cwd()),
         "google_api_key_prefix": api_key_prefix,
-        "gemini_model": "gemini-1.5-flash",
-        "authentication": "vertex_ai",
+        "gemini_model": "gemini-1.5-flash-001",
+        "authentication": "vertex_ai_full",
         "vertex_env_vars": {
             "GOOGLE_CLOUD_PROJECT": os.getenv("GOOGLE_CLOUD_PROJECT", "not_set"),
             "GOOGLE_CLOUD_LOCATION": os.getenv("GOOGLE_CLOUD_LOCATION", "not_set"),

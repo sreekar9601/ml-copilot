@@ -9,11 +9,11 @@ from google import genai
 
 logger = logging.getLogger(__name__)
 
-logger.info("--- Initializing Vertex AI Clients via Environment ---")
+logger.info("--- Initializing Full Vertex AI Client via Environment ---")
 
 # Define model names centrally
-# Use Studio API compatible model names
-GENERATION_MODEL_NAME = "gemini-1.5-flash"  # Studio API model name
+# Use versioned model names for Vertex AI
+GENERATION_MODEL_NAME = "gemini-1.5-flash-001"  # Versioned name for Vertex AI
 EMBEDDING_MODEL_NAME = "gemini-embedding-001"
 
 # Create a shared client instance
@@ -28,22 +28,12 @@ def get_client():
     return _client
 
 def get_generation_model():
-    """Returns the client for generation tasks."""
-    # Use the unified SDK but choose between Studio API and Vertex AI
-    if os.getenv("GOOGLE_API_KEY"):
-        # Use Studio API (Gemini Developer API) via unified SDK
-        studio_client = genai.Client()  # Uses API key automatically
-        logger.info("✅ Using Studio API for generation")
-        return studio_client
-    else:
-        # Use Vertex AI via unified SDK
-        vertex_client = genai.Client(
-            vertexai=True, 
-            project=os.getenv("GOOGLE_CLOUD_PROJECT"), 
-            location=os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
-        )
-        logger.info("✅ Using Vertex AI for generation")
-        return vertex_client
+    """Returns the client for generation tasks via Vertex AI."""
+    # Since the SDK forces Vertex AI when environment variables are present,
+    # use the shared Vertex AI client for consistency
+    client = get_client()
+    logger.info("✅ Using Vertex AI for generation")
+    return client
 
 def embed_content(texts: list[str], task_type: str = "RETRIEVAL_DOCUMENT", title: str = None) -> list[list[float]]:
     """A wrapper for the embed_content API call."""
