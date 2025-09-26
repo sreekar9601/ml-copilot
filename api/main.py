@@ -13,8 +13,8 @@ from fastapi import FastAPI, HTTPException, Query, BackgroundTasks, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from pydantic import BaseModel, Field
-import google.generativeai as genai
-
+# IMPORTANT: Import clients module first to ensure configuration runs
+from .clients import GENERATION_MODEL
 from .config import settings
 # Import retrieval modules lazily to avoid startup failures
 # from .retrieval import retrieve_documents, RetrievalResult
@@ -30,11 +30,8 @@ logger.info(f"Data directory: {settings.data_dir}")
 logger.info(f"ChromaDB collection: {settings.chroma_collection}")
 logger.info(f"SQLite database: {settings.sqlite_db}")
 
-# Configure Gemini with explicit REST transport to force Studio API routing
-genai.configure(
-    api_key=settings.google_api_key,
-    transport='rest'  # Force REST API to prevent Vertex AI routing
-)
+# Configuration is now handled in clients.py
+# No need to configure here as it's already done
 
 # Debug logging for Google API configuration
 api_key_prefix = settings.google_api_key[:8] + "..." if settings.google_api_key else "NOT_SET"
@@ -149,23 +146,12 @@ class ReindexRequest(BaseModel):
     clear_existing: bool = Field(default=True, description="Whether to clear existing data")
 
 
-# Global Gemini model
-gemini_model = None
+# Global Gemini model is now managed in clients.py
 
 
 def get_gemini_model():
-    """Get or create Gemini model instance."""
-    global gemini_model
-    if gemini_model is None:
-        gemini_model = genai.GenerativeModel(
-            model_name="gemini-1.5-flash",  # Use base model without -latest suffix
-            generation_config={
-                "temperature": 0.1,
-                "top_p": 0.9,
-                "max_output_tokens": 2048,
-            }
-        )
-    return gemini_model
+    """Get the pre-configured Gemini model instance."""
+    return GENERATION_MODEL
 
 
 def format_context_chunks(results: List[Any]) -> str:

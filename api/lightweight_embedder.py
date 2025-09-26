@@ -4,6 +4,7 @@ import logging
 import numpy as np
 from typing import List, Union
 import google.generativeai as genai
+from . import clients  # This ensures clients.py is imported and configured
 from .config import settings
 
 logger = logging.getLogger(__name__)
@@ -12,10 +13,10 @@ logger = logging.getLogger(__name__)
 class LightweightEmbedder:
     """Lightweight embedder using Google Generative AI embeddings."""
     
-    def __init__(self, model_name: str = "gemini-embedding-001"):
+    def __init__(self, model_name: str = clients.EMBEDDING_MODEL_NAME):
         self.model_name = model_name
-        # Configure API key
-        genai.configure(api_key=settings.google_api_key)
+        # DO NOT initialize a new client here.
+        # The genai module is already configured in clients.py
         logger.info(f"Initialized LightweightEmbedder with Google AI model: {model_name}")
     
     def encode_query(self, text: str) -> np.ndarray:
