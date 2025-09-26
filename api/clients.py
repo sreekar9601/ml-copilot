@@ -35,12 +35,18 @@ def embed_content(texts: list[str], task_type: str = "RETRIEVAL_DOCUMENT", title
     
     client = get_client()
     
-    # Use the client's models.embed_content method
+    # Import the types module for configuration
+    from google.genai import types
+    
+    # Use the client's models.embed_content method with output_dimensionality=768
+    # This maintains compatibility with existing Qdrant collection
     response = client.models.embed_content(
         model=EMBEDDING_MODEL_NAME,
-        content=texts,
-        task_type=task_type,
-        title=title
+        contents=texts,
+        config=types.EmbedContentConfig(
+            task_type=task_type,
+            output_dimensionality=768  # Maintain 768 dimensions for compatibility
+        )
     )
     
     # Extract embeddings from response

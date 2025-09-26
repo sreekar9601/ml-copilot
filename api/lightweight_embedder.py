@@ -25,8 +25,8 @@ class LightweightEmbedder:
             return np.array(embeddings[0])
         except Exception as e:
             logger.error(f"Error encoding query: {e}")
-            # Return a zero vector as fallback (gemini-embedding-001 has 3072 dims)
-            return np.zeros(3072)
+            # Return a zero vector as fallback (using 768 dims for compatibility)
+            return np.zeros(768)
     
     def encode_documents(self, texts: List[str]) -> List[np.ndarray]:
         """Encode multiple document texts into embedding vectors."""
@@ -35,8 +35,8 @@ class LightweightEmbedder:
             return [np.array(e) for e in embeddings]
         except Exception as e:
             logger.error(f"Error encoding documents: {e}")
-            # Return zero vectors as fallback (gemini-embedding-001 has 3072 dims)
-            return [np.zeros(3072) for _ in texts]
+            # Return zero vectors as fallback (using 768 dims for compatibility)
+            return [np.zeros(768) for _ in texts]
     
     def encode(self, text: str) -> np.ndarray:
         """Generic encode method for backward compatibility."""
