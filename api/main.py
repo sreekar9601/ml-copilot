@@ -215,7 +215,7 @@ async def debug_info():
         "python_version": f"{platform.python_version()}",
         "working_dir": str(Path.cwd()),
         "google_api_key_prefix": api_key_prefix,
-        "gemini_model": "gemini-1.5-flash-001",
+        "gemini_model": "gemini-2.5-flash",
         "authentication": "vertex_ai_full",
         "vertex_env_vars": {
             "GOOGLE_CLOUD_PROJECT": os.getenv("GOOGLE_CLOUD_PROJECT", "not_set"),

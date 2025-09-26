@@ -11,9 +11,9 @@ logger = logging.getLogger(__name__)
 
 logger.info("--- Initializing Full Vertex AI Client via Environment ---")
 
-# Define model names centrally
-# Use versioned model names for Vertex AI
-GENERATION_MODEL_NAME = "gemini-1.5-flash-001"  # Versioned name for Vertex AI
+# Define model names centrally  
+# Use current stable model names for Vertex AI
+GENERATION_MODEL_NAME = "gemini-2.5-flash"  # Current stable model
 EMBEDDING_MODEL_NAME = "gemini-embedding-001"
 
 # Create a shared client instance
