@@ -30,13 +30,17 @@ logger.info(f"Data directory: {settings.data_dir}")
 logger.info(f"ChromaDB collection: {settings.chroma_collection}")
 logger.info(f"SQLite database: {settings.sqlite_db}")
 
-# Configure Gemini
-genai.configure(api_key=settings.google_api_key)
+# Configure Gemini with explicit REST transport to force Studio API routing
+genai.configure(
+    api_key=settings.google_api_key,
+    transport='rest'  # Force REST API to prevent Vertex AI routing
+)
 
 # Debug logging for Google API configuration
 api_key_prefix = settings.google_api_key[:8] + "..." if settings.google_api_key else "NOT_SET"
 logger.info(f"🔑 Google API Key prefix: {api_key_prefix}")
-logger.info(f"🤖 Using Gemini model: gemini-1.5-flash-latest")
+logger.info(f"🤖 Using Gemini model: gemini-1.5-flash")
+logger.info(f"🌐 Transport: REST (forced Studio API routing)")
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -154,7 +158,7 @@ def get_gemini_model():
     global gemini_model
     if gemini_model is None:
         gemini_model = genai.GenerativeModel(
-            model_name="gemini-1.5-flash-latest",  # Use explicit latest alias
+            model_name="gemini-1.5-flash",  # Use base model without -latest suffix
             generation_config={
                 "temperature": 0.1,
                 "top_p": 0.9,
@@ -221,7 +225,8 @@ async def debug_info():
         "python_version": f"{platform.python_version()}",
         "working_dir": str(Path.cwd()),
         "google_api_key_prefix": api_key_prefix,
-        "gemini_model": "gemini-1.5-flash-latest",
+        "gemini_model": "gemini-1.5-flash",
+        "transport": "rest",
         "vertex_env_vars": {
             "AIPLATFORM_ENDPOINT": os.getenv("AIPLATFORM_ENDPOINT", "not_set"),
             "VERTEXAI_ENDPOINT": os.getenv("VERTEXAI_ENDPOINT", "not_set"),
