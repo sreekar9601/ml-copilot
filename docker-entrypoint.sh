@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+# Purge any Vertex AI environment variables that might interfere with Studio API
+unset AIPLATFORM_ENDPOINT
+unset VERTEXAI_ENDPOINT
+unset GOOGLE_CLOUD_PROJECT
+unset GOOGLE_APPLICATION_CREDENTIALS
+
 # Debug environment variables
 echo "=== Railway Deployment Debug ==="
 echo "PORT: ${PORT:-not_set}"
@@ -10,8 +16,13 @@ echo "HOST: 0.0.0.0"
 echo "PWD: $(pwd)"
 echo "Python version: $(python --version)"
 echo "Uvicorn version: $(uvicorn --version)"
+echo "Google API Key prefix: ${GOOGLE_API_KEY:0:8}..."
+echo "Vertex env vars (should be unset):"
+echo "  AIPLATFORM_ENDPOINT: ${AIPLATFORM_ENDPOINT:-unset}"
+echo "  VERTEXAI_ENDPOINT: ${VERTEXAI_ENDPOINT:-unset}"
+echo "  GOOGLE_CLOUD_PROJECT: ${GOOGLE_CLOUD_PROJECT:-unset}"
 echo "All env vars:"
-env | grep -E "(PORT|RAILWAY)" || echo "No PORT or RAILWAY vars found"
+env | grep -E "(PORT|RAILWAY|GOOGLE)" || echo "No relevant vars found"
 echo "================================"
 
 # Use PORT if set, otherwise default to 8000

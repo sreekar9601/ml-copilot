@@ -33,6 +33,11 @@ logger.info(f"SQLite database: {settings.sqlite_db}")
 # Configure Gemini
 genai.configure(api_key=settings.google_api_key)
 
+# Debug logging for Google API configuration
+api_key_prefix = settings.google_api_key[:8] + "..." if settings.google_api_key else "NOT_SET"
+logger.info(f"🔑 Google API Key prefix: {api_key_prefix}")
+logger.info(f"🤖 Using Gemini model: gemini-1.5-flash-latest")
+
 # Initialize FastAPI app
 app = FastAPI(
     title="ML Documentation Copilot",
@@ -149,7 +154,7 @@ def get_gemini_model():
     global gemini_model
     if gemini_model is None:
         gemini_model = genai.GenerativeModel(
-            model_name="gemini-1.5-flash",
+            model_name="gemini-1.5-flash-latest",  # Use explicit latest alias
             generation_config={
                 "temperature": 0.1,
                 "top_p": 0.9,
@@ -207,12 +212,21 @@ async def health_check():
 async def debug_info():
     """Debug endpoint to check environment variables."""
     import os
+    api_key_prefix = settings.google_api_key[:8] + "..." if settings.google_api_key else "NOT_SET"
+    
     return {
         "status": "debug",
         "port_env": os.getenv("PORT", "not_set"),
         "host": "0.0.0.0",
         "python_version": f"{platform.python_version()}",
-        "working_dir": str(Path.cwd())
+        "working_dir": str(Path.cwd()),
+        "google_api_key_prefix": api_key_prefix,
+        "gemini_model": "gemini-1.5-flash-latest",
+        "vertex_env_vars": {
+            "AIPLATFORM_ENDPOINT": os.getenv("AIPLATFORM_ENDPOINT", "not_set"),
+            "VERTEXAI_ENDPOINT": os.getenv("VERTEXAI_ENDPOINT", "not_set"),
+            "GOOGLE_CLOUD_PROJECT": os.getenv("GOOGLE_CLOUD_PROJECT", "not_set")
+        }
     }
 
 @app.get("/health-detailed", response_model=HealthResponse)
