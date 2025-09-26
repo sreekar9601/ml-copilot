@@ -180,11 +180,16 @@ def generate_answer(query: str, context_chunks: str) -> str:
             user_question=query
         )
         
-        # Generate response using the new API
-        response = client.models.generate_content(
-            model=GENERATION_MODEL_NAME,
-            contents=prompt
-        )
+        # Generate response - handle both Studio API and Vertex AI
+        if hasattr(client, 'models'):
+            # Vertex AI client
+            response = client.models.generate_content(
+                model=GENERATION_MODEL_NAME,
+                contents=prompt
+            )
+        else:
+            # Studio API client
+            response = client.generate_content(prompt)
         
         if response.text:
             return response.text
