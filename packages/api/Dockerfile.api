@@ -14,20 +14,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 # Install deps first for better layer cache
-COPY requirements-api.txt .
+COPY packages/api/requirements-api.txt .
 RUN python -m pip install --upgrade pip \
  && pip install -r requirements-api.txt
 
 # Copy only the API service code
-COPY api/ /app/api
+COPY packages/api/api/ /app/api
 
 # Copy and set up entrypoint script
-COPY docker-entrypoint.sh /usr/local/bin/
+COPY packages/api/docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Create runtime dirs and copy SQLite database for keyword search
 RUN mkdir -p /app/data
-COPY data/bm25.db /app/data/bm25.db
+COPY packages/api/data/bm25.db /app/data/bm25.db
 
 # Health check (use a more conservative timeout for Railway)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
