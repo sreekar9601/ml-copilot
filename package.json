@@ -1,0 +1,27 @@
+{
+  "name": "ml-copilot-monorepo",
+  "version": "1.0.0",
+  "description": "AI-powered assistant for ML infrastructure documentation - Full Stack Application",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"pnpm dev:web\" \"pnpm dev:api\"",
+    "dev:web": "cd packages/web && pnpm dev",
+    "dev:api": "cd packages/api && python -m uvicorn api.main:app --reload --host 0.0.0.0 --port 8000",
+    "build": "pnpm build:web",
+    "build:web": "cd packages/web && pnpm build",
+    "start": "cd packages/web && pnpm start",
+    "lint": "cd packages/web && pnpm lint",
+    "test": "cd packages/web && pnpm test"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "packageManager": "pnpm@8.15.0",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}
