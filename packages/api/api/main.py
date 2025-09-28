@@ -204,7 +204,7 @@ def generate_answer(query: str, context_chunks: str) -> str:
         # Generate response using Vertex AI
         response = client.models.generate_content(
             model=GENERATION_MODEL_NAME,
-            text=prompt  # Changed from 'contents' to 'text'
+            contents=prompt
         )
         
         if response.text:

@@ -84,12 +84,13 @@ def embed_content(texts: list[str], task_type: str = "RETRIEVAL_DOCUMENT", title
     embeddings = []
     for text in texts:
         try:
+            # Use the client.models.embed_content method as per official documentation
             response = client.models.embed_content(
                 model=EMBEDDING_MODEL_NAME,
-                text=text,  # Changed from 'content' to 'text'
+                content=text,
                 task_type=task_type,
                 title=title,
-                output_dimensionality=768  # Maintain 768 dimensions for compatibility
+                output_dimensionality=768
             )
             embeddings.append(response.embedding)
         except Exception as e:
