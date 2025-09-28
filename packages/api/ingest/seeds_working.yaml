@@ -1,0 +1,21 @@
+urls:
+  # PyTorch - Alternative sources that work
+  - https://pytorch.org/tutorials/beginner/introyt/introyt1_tutorial.html
+  - https://pytorch.org/tutorials/beginner/basics/quickstart_tutorial.html
+  - https://pytorch.org/tutorials/beginner/basics/tensorqs_tutorial.html
+  - https://pytorch.org/tutorials/beginner/basics/data_tutorial.html
+  - https://pytorch.org/tutorials/beginner/basics/autogradqs_tutorial.html
+  - https://pytorch.org/tutorials/beginner/basics/optimization_tutorial.html
+  - https://pytorch.org/tutorials/beginner/basics/model_tutorial.html
+  - https://pytorch.org/tutorials/beginner/basics/saveloadrun_tutorial.html
+  
+  # MLflow - Working URLs
+  - https://mlflow.org/docs/latest/getting-started/
+  - https://mlflow.org/docs/latest/tracking/
+  - https://mlflow.org/docs/latest/models/
+  - https://mlflow.org/docs/latest/model-registry/
+  
+  # Ray Serve - Alternative sources
+  - https://docs.ray.io/en/latest/serve/getting-started.html
+  - https://docs.ray.io/en/latest/serve/key-concepts.html
+  - https://docs.ray.io/en/latest/serve/production-guide/deployment.html

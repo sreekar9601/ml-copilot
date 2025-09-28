@@ -4,7 +4,9 @@ An AI-powered assistant for ML infrastructure documentation, specializing in PyT
 
 ## Features
 
-- 🔍 **Hybrid Search**: Combines vector similarity and keyword search using Reciprocal Rank Fusion (RRF)
+- 🔍 **Advanced Hybrid Search**: Combines vector similarity and keyword search using Reciprocal Rank Fusion (RRF)
+- 🧠 **Query Expansion**: Automatically generates multiple focused sub-queries for comprehensive retrieval
+- 🎯 **Intelligent Re-ranking**: Cross-encoder re-ranking for optimal relevance scoring
 - 📚 **Comprehensive Knowledge Base**: Covers PyTorch, MLflow, KServe, and Ray Serve documentation
 - 🎯 **Strict Citations**: Every factual statement is backed by source citations
 - 🚀 **Fast API**: Built with FastAPI for high-performance REST endpoints
@@ -33,7 +35,10 @@ An AI-powered assistant for ML infrastructure documentation, specializing in PyT
 ### Data Flow
 
 1. **Ingestion**: Crawl documentation → Clean HTML → Chunk text → Generate embeddings → Store in ChromaDB + SQLite
-2. **Retrieval**: User query → Parallel vector + keyword search → RRF fusion → Context expansion
+2. **Advanced Retrieval**: 
+   - User query → Query expansion → Multiple sub-queries
+   - Parallel vector + keyword search for each sub-query
+   - RRF fusion → Cross-encoder re-ranking → Context expansion
 3. **Generation**: Formatted context + system prompt → Gemini API → Cited response
 
 ## Quick Start
@@ -100,11 +105,20 @@ An AI-powered assistant for ML infrastructure documentation, specializing in PyT
 
 ### Core Endpoints
 
-- `POST /ask` - Ask questions about ML documentation
+- `POST /ask` - Ask questions about ML documentation (standard retrieval)
   ```json
   {
     "q": "How to use MLflow model registry?",
     "top_k": 5,
+    "include_sources": true
+  }
+  ```
+
+- `POST /ask-advanced` - Ask questions with advanced query expansion and re-ranking
+  ```json
+  {
+    "q": "Design a machine learning system for fraud detection",
+    "top_k": 10,
     "include_sources": true
   }
   ```
@@ -197,6 +211,32 @@ Then rerun ingestion:
 python -m ingest.main --clear
 ```
 
+## Advanced Retrieval System
+
+### Query Expansion
+
+The system automatically expands user queries into multiple focused sub-queries:
+
+- **Architectural Queries**: For system design questions, generates sub-queries about best practices, deployment patterns, and architectural patterns
+- **Implementation Queries**: For "how-to" questions, generates sub-queries about examples, API references, and step-by-step guides
+- **Comparison Queries**: For technology comparisons, generates sub-queries comparing different tools and approaches
+- **Best Practices**: Always generates sub-queries about best practices and common patterns
+- **Troubleshooting**: Generates sub-queries about common issues and debugging
+
+### Re-ranking System
+
+After initial retrieval, the system uses intelligent re-ranking:
+
+- **Term Overlap Scoring**: Boosts results with higher query-term overlap
+- **Title Relevance**: Prioritizes results where titles match query terms
+- **Content Relevance**: Analyzes content similarity to the original query
+- **Cross-encoder Scoring**: Uses advanced scoring for optimal relevance
+
+### Retrieval Modes
+
+- **Standard Mode** (`/ask`): Uses basic hybrid search with RRF fusion
+- **Advanced Mode** (`/ask-advanced`): Uses query expansion + re-ranking for complex architectural questions
+
 ## Performance Tuning
 
 ### Retrieval Parameters
@@ -267,13 +307,15 @@ ml-docs-copilot/
 ├── api/                    # FastAPI application
 │   ├── main.py            # API endpoints
 │   ├── retrieval.py       # Hybrid search system
+│   ├── advanced_retrieval.py # Advanced retrieval with expansion & re-ranking
+│   ├── clients.py         # Google AI client configuration
 │   ├── prompts.py         # LLM prompts
 │   └── config.py          # Configuration
 ├── ingest/                # Data ingestion pipeline
 │   ├── main.py           # Ingestion runner
 │   ├── crawl.py          # Web crawling
 │   ├── chunker.py        # Text chunking
-│   ├── embedder.py       # Text embedding
+│   ├── embedder.py        # Text embedding
 │   ├── upsert.py         # Database storage
 │   └── seeds.yaml        # Documentation URLs
 ├── data/                 # Persistent databases

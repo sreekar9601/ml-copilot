@@ -120,6 +120,17 @@ class QueryRequest(BaseModel):
     q: str = Field(..., description="User question about ML infrastructure")
     top_k: int = Field(default=5, ge=1, le=20, description="Number of top documents to retrieve")
     include_sources: bool = Field(default=True, description="Whether to include source information")
+    use_expansion: bool = Field(default=False, description="Whether to use query expansion (advanced mode)")
+    use_reranking: bool = Field(default=False, description="Whether to use re-ranking (advanced mode)")
+
+
+class AdvancedQueryRequest(BaseModel):
+    """Request model for the /ask-advanced endpoint."""
+    q: str = Field(..., description="User question about ML infrastructure")
+    top_k: int = Field(default=10, ge=1, le=20, description="Number of top documents to retrieve")
+    include_sources: bool = Field(default=True, description="Whether to include source information")
+    use_expansion: bool = Field(default=True, description="Whether to use query expansion")
+    use_reranking: bool = Field(default=True, description="Whether to use re-ranking")
 
 
 class SourceInfo(BaseModel):
@@ -275,6 +286,75 @@ async def health_check_detailed():
     )
 
 
+@app.post("/ask-advanced", response_model=QueryResponse)
+async def ask_question_advanced(request: AdvancedQueryRequest):
+    """Advanced endpoint with query expansion and re-ranking options."""
+    
+    start_time = time.time()
+    
+    if not request.q.strip():
+        raise HTTPException(status_code=400, detail="Query cannot be empty")
+    
+    try:
+        # Import advanced retrieval modules lazily
+        from .advanced_retrieval import advanced_retrieve_documents, RetrievalResult
+        
+        # Retrieve relevant documents using advanced retrieval
+        retrieval_start = time.time()
+        results = advanced_retrieve_documents(
+            request.q, 
+            top_k=request.top_k,
+            use_expansion=request.use_expansion,
+            use_reranking=request.use_reranking
+        )
+        retrieval_time = (time.time() - retrieval_start) * 1000
+        
+        if not results:
+            raise HTTPException(
+                status_code=404, 
+                detail="No relevant documents found. The knowledge base might be empty or your query is too specific."
+            )
+        
+        # Format context for the LLM
+        context_chunks = format_context_chunks(results)
+        
+        # Generate answer
+        generation_start = time.time()
+        answer = generate_answer(request.q, context_chunks)
+        generation_time = (time.time() - generation_start) * 1000
+        
+        # Prepare sources
+        sources = []
+        if request.include_sources:
+            for result in results:
+                sources.append(SourceInfo(
+                    chunk_id=result.chunk_id,
+                    title=result.metadata.get('title', 'Unknown'),
+                    url=result.metadata.get('source_url', ''),
+                    heading_path=result.metadata.get('heading_path', ''),
+                    anchor_link=result.metadata.get('anchor_link', ''),
+                    relevance_score=result.score
+                ))
+        
+        total_time = (time.time() - start_time) * 1000
+        
+        return QueryResponse(
+            answer=answer,
+            sources=sources,
+            query=request.q,
+            retrieval_time_ms=retrieval_time,
+            generation_time_ms=generation_time,
+            total_time_ms=total_time,
+            chunks_retrieved=len(results)
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error processing advanced query '{request.q}': {e}")
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+
+
 @app.post("/ask", response_model=QueryResponse)
 async def ask_question(request: QueryRequest):
     """Main endpoint for asking questions about ML documentation."""
@@ -285,12 +365,17 @@ async def ask_question(request: QueryRequest):
         raise HTTPException(status_code=400, detail="Query cannot be empty")
     
     try:
-        # Import retrieval modules lazily
-        from .retrieval import retrieve_documents, RetrievalResult
+        # Import advanced retrieval modules lazily
+        from .advanced_retrieval import advanced_retrieve_documents, RetrievalResult
         
-        # Retrieve relevant documents
+        # Retrieve relevant documents using advanced retrieval
         retrieval_start = time.time()
-        results = retrieve_documents(request.q, top_k=request.top_k)
+        results = advanced_retrieve_documents(
+            request.q, 
+            top_k=request.top_k,
+            use_expansion=request.use_expansion,
+            use_reranking=request.use_reranking
+        )
         retrieval_time = (time.time() - retrieval_start) * 1000
         
         if not results:
@@ -457,7 +542,8 @@ async def root():
         "description": "AI assistant for ML infrastructure documentation",
         "version": "1.0.0",
         "endpoints": {
-            "/ask": "POST - Ask questions about ML documentation",
+            "/ask": "POST - Ask questions about ML documentation (standard retrieval)",
+            "/ask-advanced": "POST - Ask questions with advanced query expansion and re-ranking",
             "/health": "GET - Health check",
             "/stats": "GET - Knowledge base statistics",
             "/sources/{chunk_id}": "GET - Get chunk details",

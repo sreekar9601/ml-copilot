@@ -5,7 +5,9 @@ This module uses the new google-genai SDK with Vertex AI authentication.
 
 import logging
 import os
-from google import genai
+import json
+import google.genai as genai
+from .config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -23,8 +25,39 @@ def get_client():
     """Get or create the shared client instance."""
     global _client
     if _client is None:
-        _client = genai.Client()
-        logger.info("✅ Vertex AI client created")
+        # Try API key first, then fall back to Vertex AI
+        api_key = settings.google_api_key
+        if api_key:
+            _client = genai.Client(api_key=api_key)
+            logger.info("✅ Google AI client created with API key")
+        else:
+            # Use Vertex AI configuration from settings
+            project = settings.google_cloud_project
+            location = settings.google_cloud_location
+            
+            logger.info(f"Project: {project}, Location: {location}")
+            
+            if not project:
+                raise ValueError("GOOGLE_CLOUD_PROJECT environment variable is required")
+            
+            # Set up credentials from environment variable
+            credentials_json = os.getenv('GOOGLE_APPLICATION_CREDENTIALS_JSON')
+            if credentials_json:
+                # Parse the JSON credentials
+                credentials = json.loads(credentials_json)
+                # Set the GOOGLE_APPLICATION_CREDENTIALS environment variable
+                credentials_file = os.path.join(os.getcwd(), 'credentials.json')
+                with open(credentials_file, 'w') as f:
+                    json.dump(credentials, f)
+                os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credentials_file
+                logger.info("✅ Credentials file created and set")
+            
+            _client = genai.Client(
+                vertexai=True,
+                project=project,
+                location=location
+            )
+            logger.info("✅ Vertex AI client created")
     return _client
 
 def get_generation_model():
@@ -41,22 +74,19 @@ def embed_content(texts: list[str], task_type: str = "RETRIEVAL_DOCUMENT", title
     
     client = get_client()
     
-    # Import the types module for configuration
-    from google.genai import types
-    
-    # Use the client's models.embed_content method with output_dimensionality=768
-    # This maintains compatibility with existing Qdrant collection
-    response = client.models.embed_content(
-        model=EMBEDDING_MODEL_NAME,
-        contents=texts,
-        config=types.EmbedContentConfig(
+    # Use the new SDK's embed_content method
+    embeddings = []
+    for text in texts:
+        response = client.models.embed_content(
+            model=EMBEDDING_MODEL_NAME,
+            content=text,
             task_type=task_type,
+            title=title,
             output_dimensionality=768  # Maintain 768 dimensions for compatibility
         )
-    )
+        embeddings.append(response.embedding)
     
-    # Extract embeddings from response
-    return [embedding.values for embedding in response.embeddings]
+    return embeddings
 
 logger.info(f"✅ Generation Model ('{GENERATION_MODEL_NAME}') is ready to be used.")
 logger.info(f"✅ Embedding Model ('{EMBEDDING_MODEL_NAME}') is ready to be used.")

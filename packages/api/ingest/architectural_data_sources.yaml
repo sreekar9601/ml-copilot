@@ -1,0 +1,140 @@
+# Architectural Data Sources for ML Copilot
+# Tiered approach focusing on decision-making knowledge
+
+tier1_core_technical:
+  pytorch:
+    - name: "PyTorch Distributed Training"
+      source: "https://pytorch.org/docs/stable/distributed.html"
+      type: "api_reference"
+      topics: ["distributed_training", "ddp", "performance"]
+      priority: "high"
+    - name: "PyTorch Data Loading"
+      source: "https://pytorch.org/docs/stable/data.html"
+      type: "api_reference"
+      topics: ["data_loading", "dataloader", "performance"]
+      priority: "high"
+    - name: "PyTorch Model Serving"
+      source: "https://pytorch.org/serve/"
+      type: "tutorial"
+      topics: ["model_serving", "deployment", "torchserve"]
+      priority: "high"
+
+  mlflow:
+    - name: "MLflow Model Registry"
+      source: "https://mlflow.org/docs/latest/model-registry.html"
+      type: "guide"
+      topics: ["model_management", "versioning", "governance"]
+      priority: "high"
+    - name: "MLflow Deployment"
+      source: "https://mlflow.org/docs/latest/models.html"
+      type: "guide"
+      topics: ["deployment", "model_serving", "production"]
+      priority: "high"
+
+  ray:
+    - name: "Ray Serve Architecture"
+      source: "https://docs.ray.io/en/latest/serve/architecture.html"
+      type: "architecture"
+      topics: ["model_serving", "scaling", "distributed"]
+      priority: "high"
+    - name: "Ray Tune Hyperparameter Optimization"
+      source: "https://docs.ray.io/en/latest/tune/"
+      type: "guide"
+      topics: ["hyperparameter_tuning", "optimization", "experimentation"]
+      priority: "medium"
+
+  kserve:
+    - name: "KServe Inference Service"
+      source: "https://kserve.github.io/website/latest/get_started/"
+      type: "tutorial"
+      topics: ["kubernetes", "model_serving", "production"]
+      priority: "high"
+
+tier2_infrastructure:
+  containerization:
+    - name: "Docker Best Practices"
+      source: "https://docs.docker.com/develop/dev-best-practices/"
+      type: "best_practices"
+      topics: ["containerization", "optimization", "security"]
+      priority: "medium"
+    
+    - name: "Kubernetes Deployments"
+      source: "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/"
+      type: "concept"
+      topics: ["kubernetes", "deployment", "orchestration"]
+      priority: "medium"
+
+  data_versioning:
+    - name: "DVC Data Versioning"
+      source: "https://dvc.org/doc/use-cases/versioning-data-and-model-files"
+      type: "tutorial"
+      topics: ["data_versioning", "reproducibility", "pipeline"]
+      priority: "medium"
+
+  cicd:
+    - name: "GitHub Actions for ML"
+      source: "https://docs.github.com/en/actions/learn-github-actions"
+      type: "tutorial"
+      topics: ["cicd", "automation", "ml_pipeline"]
+      priority: "medium"
+
+tier3_architectural:
+  mlops_blogs:
+    - name: "Google MLOps Guide"
+      source: "https://cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning"
+      type: "whitepaper"
+      topics: ["mlops", "architecture", "best_practices"]
+      priority: "high"
+    
+    - name: "AWS ML Architecture Patterns"
+      source: "https://aws.amazon.com/architecture/ml-ai/"
+      type: "architecture"
+      topics: ["cloud_architecture", "aws", "patterns"]
+      priority: "high"
+
+    - name: "Netflix ML Engineering"
+      source: "https://netflixtechblog.com/tagged/machine-learning"
+      type: "engineering_blog"
+      topics: ["production_ml", "scaling", "engineering"]
+      priority: "high"
+
+  cloud_services:
+    - name: "AWS SageMaker Architecture"
+      source: "https://docs.aws.amazon.com/sagemaker/"
+      type: "cloud_service"
+      topics: ["aws", "managed_ml", "cloud"]
+      priority: "medium"
+    
+    - name: "Google Vertex AI"
+      source: "https://cloud.google.com/vertex-ai/docs"
+      type: "cloud_service"
+      topics: ["gcp", "managed_ml", "cloud"]
+      priority: "medium"
+
+# Alternative sources for when web scraping fails
+alternative_sources:
+  local_docs:
+    - name: "PyTorch Local Documentation"
+      path: "./docs/pytorch/"
+      type: "local_docs"
+      topics: ["pytorch", "api", "tutorials"]
+      priority: "high"
+    
+    - name: "MLflow Local Documentation"
+      path: "./docs/mlflow/"
+      type: "local_docs"
+      topics: ["mlflow", "api", "guides"]
+      priority: "high"
+
+  curated_content:
+    - name: "MLOps Best Practices"
+      path: "./docs/curated/mlops_best_practices.md"
+      type: "curated"
+      topics: ["mlops", "best_practices", "architecture"]
+      priority: "high"
+    
+    - name: "Architecture Decision Records"
+      path: "./docs/curated/architecture_decisions.md"
+      type: "adr"
+      topics: ["architecture", "decisions", "trade_offs"]
+      priority: "high"

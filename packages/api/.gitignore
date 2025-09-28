@@ -3,6 +3,9 @@
 .env.local
 .env.production
 
+# Google Cloud credentials
+credentials.json
+
 # Python
 __pycache__/
 *.py[cod]

@@ -10,7 +10,12 @@ class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
     
     # API Keys
-    google_api_key: str = Field(..., env="GOOGLE_API_KEY")
+    google_api_key: str = Field(default="", env="GOOGLE_API_KEY")
+    
+    # Google Cloud / Vertex AI
+    google_cloud_project: str = Field(default="", env="GOOGLE_CLOUD_PROJECT")
+    google_cloud_location: str = Field(default="us-central1", env="GOOGLE_CLOUD_LOCATION")
+    google_genai_use_vertexai: str = Field(default="False", env="GOOGLE_GENAI_USE_VERTEXAI")
     
     # Qdrant (managed vector DB)
     qdrant_url: str | None = Field(default=None, env="QDRANT_URL")
