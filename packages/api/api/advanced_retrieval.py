@@ -316,46 +316,46 @@ class AdvancedRetriever:
                 if use_reranking:
                     results = self.reranker.rerank(query, results, top_k)
                 return results
-        
-        # Expand query into multiple sub-queries
-        expanded_queries = self.query_expander.expand_query(query)
-        logger.info(f"Generated {len(expanded_queries)} expanded queries")
-        
-        # Retrieve documents for each expanded query
-        all_results = {}
-        
-        for expanded_query in expanded_queries:
-            logger.debug(f"Processing expanded query: {expanded_query.query}")
             
-            # Retrieve documents for this sub-query
-            sub_results = self.base_retriever.retrieve(
-                expanded_query.query, 
-                top_k=min(20, top_k * 2)  # Get more results for sub-queries
-            )
+            # Expand query into multiple sub-queries
+            expanded_queries = self.query_expander.expand_query(query)
+            logger.info(f"Generated {len(expanded_queries)} expanded queries")
             
-            # Weight results by query weight
-            for result in sub_results:
-                result.score *= expanded_query.weight
+            # Retrieve documents for each expanded query
+            all_results = {}
+            
+            for expanded_query in expanded_queries:
+                logger.debug(f"Processing expanded query: {expanded_query.query}")
                 
-                # Add to combined results
-                if result.chunk_id not in all_results:
-                    all_results[result.chunk_id] = result
-                else:
-                    # Keep the higher score
-                    if result.score > all_results[result.chunk_id].score:
+                # Retrieve documents for this sub-query
+                sub_results = self.base_retriever.retrieve(
+                    expanded_query.query, 
+                    top_k=min(20, top_k * 2)  # Get more results for sub-queries
+                )
+            
+                # Weight results by query weight
+                for result in sub_results:
+                    result.score *= expanded_query.weight
+                    
+                    # Add to combined results
+                    if result.chunk_id not in all_results:
                         all_results[result.chunk_id] = result
-        
-        # Convert to list and sort by score
-        combined_results = list(all_results.values())
-        combined_results.sort(key=lambda x: x.score, reverse=True)
-        
-        logger.info(f"Combined {len(combined_results)} unique results from expanded queries")
-        
-        # Re-rank if requested
-        if use_reranking:
-            combined_results = self.reranker.rerank(query, combined_results, top_k)
-        
-        return combined_results[:top_k]
+                    else:
+                        # Keep the higher score
+                        if result.score > all_results[result.chunk_id].score:
+                            all_results[result.chunk_id] = result
+            
+            # Convert to list and sort by score
+            combined_results = list(all_results.values())
+            combined_results.sort(key=lambda x: x.score, reverse=True)
+            
+            logger.info(f"Combined {len(combined_results)} unique results from expanded queries")
+            
+            # Re-rank if requested
+            if use_reranking:
+                combined_results = self.reranker.rerank(query, combined_results, top_k)
+            
+            return combined_results[:top_k]
         
         except Exception as e:
             logger.error(f"Error in advanced retrieval for query '{query}': {e}")
