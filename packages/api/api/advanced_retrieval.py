@@ -49,27 +49,27 @@ class QueryExpander:
                 weight=1.0,
                 metadata={"type": "original"}
             ))
-        
-        # Generate architectural sub-queries
-        if self._is_architectural_query(original_query):
-            expanded_queries.extend(self._generate_architectural_queries(original_query))
-        
-        # Generate implementation sub-queries
-        if self._is_implementation_query(original_query):
-            expanded_queries.extend(self._generate_implementation_queries(original_query))
-        
-        # Generate comparison sub-queries
-        if self._is_comparison_query(original_query):
-            expanded_queries.extend(self._generate_comparison_queries(original_query))
-        
-        # Generate best practices queries
-        expanded_queries.extend(self._generate_best_practices_queries(original_query))
-        
-        # Generate troubleshooting queries
-        expanded_queries.extend(self._generate_troubleshooting_queries(original_query))
-        
-        return expanded_queries
-        
+            
+            # Generate architectural sub-queries
+            if self._is_architectural_query(original_query):
+                expanded_queries.extend(self._generate_architectural_queries(original_query))
+            
+            # Generate implementation sub-queries
+            if self._is_implementation_query(original_query):
+                expanded_queries.extend(self._generate_implementation_queries(original_query))
+            
+            # Generate comparison sub-queries
+            if self._is_comparison_query(original_query):
+                expanded_queries.extend(self._generate_comparison_queries(original_query))
+            
+            # Generate best practices queries
+            expanded_queries.extend(self._generate_best_practices_queries(original_query))
+            
+            # Generate troubleshooting queries
+            expanded_queries.extend(self._generate_troubleshooting_queries(original_query))
+            
+            return expanded_queries
+            
         except Exception as e:
             logger.error(f"Error expanding query '{original_query}': {e}")
             # Return just the original query if expansion fails
