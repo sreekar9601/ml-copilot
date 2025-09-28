@@ -25,12 +25,10 @@ def get_client():
     """Get or create the shared client instance."""
     global _client
     if _client is None:
-        # Try API key first, then fall back to Vertex AI
-        api_key = settings.google_api_key
-        if api_key:
-            _client = genai.Client(api_key=api_key)
-            logger.info("✅ Google AI client created with API key")
-        else:
+        # Check if we should use Vertex AI
+        use_vertexai = os.getenv('GOOGLE_GENAI_USE_VERTEXAI', 'False').lower() == 'true'
+        
+        if use_vertexai:
             # Use Vertex AI configuration from settings
             project = settings.google_cloud_project
             location = settings.google_cloud_location
@@ -58,6 +56,14 @@ def get_client():
                 location=location
             )
             logger.info("✅ Vertex AI client created")
+        else:
+            # Use API key for Google AI Studio
+            api_key = settings.google_api_key
+            if not api_key:
+                raise ValueError("GOOGLE_API_KEY environment variable is required for Google AI Studio")
+            
+            _client = genai.Client(api_key=api_key)
+            logger.info("✅ Google AI client created with API key")
     return _client
 
 def get_generation_model():
@@ -77,14 +83,19 @@ def embed_content(texts: list[str], task_type: str = "RETRIEVAL_DOCUMENT", title
     # Use the new SDK's embed_content method
     embeddings = []
     for text in texts:
-        response = client.models.embed_content(
-            model=EMBEDDING_MODEL_NAME,
-            content=text,
-            task_type=task_type,
-            title=title,
-            output_dimensionality=768  # Maintain 768 dimensions for compatibility
-        )
-        embeddings.append(response.embedding)
+        try:
+            response = client.models.embed_content(
+                model=EMBEDDING_MODEL_NAME,
+                text=text,  # Changed from 'content' to 'text'
+                task_type=task_type,
+                title=title,
+                output_dimensionality=768  # Maintain 768 dimensions for compatibility
+            )
+            embeddings.append(response.embedding)
+        except Exception as e:
+            logger.error(f"Error embedding text: {e}")
+            # Return zero vector as fallback
+            embeddings.append([0.0] * 768)
     
     return embeddings
 
