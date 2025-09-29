@@ -87,7 +87,7 @@ def embed_content(texts: list[str], task_type: str = "RETRIEVAL_DOCUMENT", title
             # Use the client.models.embed_content method with correct parameters
             response = client.models.embed_content(
                 model=EMBEDDING_MODEL_NAME,
-                content=text,  # Use 'content' parameter instead of 'text'
+                contents=text,  # Use 'contents' parameter (plural)
                 task_type=task_type,
                 title=title,
                 output_dimensionality=768
