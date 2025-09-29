@@ -7,6 +7,7 @@ import logging
 import os
 import json
 import google.genai as genai
+from google.genai import types
 from .config import settings
 
 logger = logging.getLogger(__name__)
@@ -88,11 +89,12 @@ def embed_content(texts: list[str], task_type: str = "RETRIEVAL_DOCUMENT", title
             response = client.models.embed_content(
                 model=EMBEDDING_MODEL_NAME,
                 contents=text,  # Use 'contents' parameter (plural)
-                task_type=task_type,
-                title=title,
-                output_dimensionality=768
+                config=types.EmbedContentConfig(
+                    task_type=task_type,
+                    output_dimensionality=768
+                )
             )
-            embeddings.append(response.embedding)
+            embeddings.append(response.embeddings[0].values)
         except Exception as e:
             logger.error(f"Error embedding text: {e}")
             # Return zero vector as fallback
