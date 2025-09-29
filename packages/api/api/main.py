@@ -595,6 +595,55 @@ async def get_stats():
         raise HTTPException(status_code=500, detail=f"Error getting stats: {str(e)}")
 
 
+class HowToRequest(BaseModel):
+    """Request model for how-to tutorial generation."""
+    query: str = Field(..., min_length=3, max_length=500, description="The task to create a tutorial for")
+    max_steps: int = Field(default=8, ge=1, le=15, description="Maximum number of steps to generate")
+
+
+@app.post("/howto")
+async def generate_howto_tutorial(request: HowToRequest):
+    """Generate a structured step-by-step tutorial for a given task."""
+    try:
+        start_time = time.time()
+        
+        # Import planner components lazily
+        from .planner import AdvancedPlanner, create_tutorial_from_plan
+        
+        logger.info(f"Generating how-to tutorial for: {request.query}")
+        
+        # Create planner and generate plan
+        planner = AdvancedPlanner()
+        plan = planner.create_plan(request.query)
+        
+        # Limit steps if needed
+        if len(plan.steps) > request.max_steps:
+            plan.steps = plan.steps[:request.max_steps]
+        
+        logger.info(f"Created plan with {len(plan.steps)} steps, intent: {plan.intent}")
+        
+        # Generate tutorial from plan
+        tutorial = create_tutorial_from_plan(plan)
+        
+        processing_time = time.time() - start_time
+        
+        response = {
+            "tutorial": tutorial.dict(),
+            "processing_time": round(processing_time, 2),
+            "plan_steps": len(plan.steps),
+            "completed_steps": len(tutorial.steps),
+            "total_citations": tutorial.total_citations
+        }
+        
+        logger.info(f"Generated tutorial with {len(tutorial.steps)} steps and {tutorial.total_citations} citations in {processing_time:.2f}s")
+        
+        return response
+        
+    except Exception as e:
+        logger.error(f"Error generating how-to tutorial: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to generate tutorial: {str(e)}")
+
+
 @app.get("/")
 async def root():
     """Root endpoint with API information."""
@@ -605,8 +654,10 @@ async def root():
         "endpoints": {
             "/ask": "POST - Ask questions about ML documentation (standard retrieval)",
             "/ask-advanced": "POST - Ask questions with advanced query expansion and re-ranking",
+            "/howto": "POST - Generate step-by-step tutorials with citations",
             "/health": "GET - Health check",
             "/stats": "GET - Knowledge base statistics",
+            "/debug/retrieval": "GET - Debug retrieval results for a query",
             "/sources/{chunk_id}": "GET - Get chunk details",
             "/reindex": "POST - Reindex documents (admin)",
             "/docs": "GET - API documentation"
