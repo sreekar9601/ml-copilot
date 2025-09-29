@@ -28,8 +28,8 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 # Create runtime dirs
 RUN mkdir -p /app/data
 
-# Note: bm25.db will be created during ingestion process
-# No need to copy it during build since it's generated from the ingested data
+# Copy the populated SQLite database for keyword search
+COPY packages/api/data/bm25.db /app/data/bm25.db
 
 # Health check (use a more conservative timeout for Railway)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
