@@ -490,6 +490,58 @@ async def reindex_documents(request: ReindexRequest, background_tasks: Backgroun
     }
 
 
+@app.get("/debug/retrieval")
+async def debug_retrieval(query: str = "PyTorch DataLoader"):
+    """Debug endpoint to see what's being retrieved for a query."""
+    try:
+        from .retrieval import get_retriever
+        retriever = get_retriever()
+        
+        # Get vector results
+        vector_results = retriever.vector_search(query, top_k=5)
+        
+        # Get keyword results  
+        keyword_results = retriever.keyword_search(query, top_k=5)
+        
+        # Get hybrid results
+        hybrid_results = retriever.retrieve(query, top_k=5)
+        
+        return {
+            "query": query,
+            "vector_results": [
+                {
+                    "chunk_id": r.chunk_id,
+                    "score": r.score,
+                    "content_preview": r.content[:200] + "..." if len(r.content) > 200 else r.content,
+                    "metadata": r.metadata
+                } for r in vector_results
+            ],
+            "keyword_results": [
+                {
+                    "chunk_id": r.chunk_id,
+                    "score": r.score,
+                    "content_preview": r.content[:200] + "..." if len(r.content) > 200 else r.content,
+                    "metadata": r.metadata
+                } for r in keyword_results
+            ],
+            "hybrid_results": [
+                {
+                    "chunk_id": r.chunk_id,
+                    "score": r.score,
+                    "content_preview": r.content[:200] + "..." if len(r.content) > 200 else r.content,
+                    "metadata": r.metadata
+                } for r in hybrid_results
+            ],
+            "vector_count": len(vector_results),
+            "keyword_count": len(keyword_results),
+            "hybrid_count": len(hybrid_results)
+        }
+        
+    except Exception as e:
+        logger.error(f"Error in debug retrieval: {e}")
+        raise HTTPException(status_code=500, detail=f"Error in debug retrieval: {str(e)}")
+
+
 @app.get("/stats")
 async def get_stats():
     """Get statistics about the knowledge base."""
@@ -498,6 +550,15 @@ async def get_stats():
         retriever = get_retriever()
         
         stats = {}
+        
+        # Qdrant stats
+        if retriever.use_qdrant and retriever.qdrant_client:
+            try:
+                collection_info = retriever.qdrant_client.get_collection(settings.qdrant_collection_name)
+                stats["qdrant_count"] = collection_info.points_count
+                stats["qdrant_vector_size"] = collection_info.config.params.vectors.size
+            except Exception as e:
+                stats["qdrant_error"] = str(e)
         
         # ChromaDB stats
         if retriever.collection:
