@@ -44,7 +44,7 @@ def get_client():
                 # Parse the JSON credentials
                 credentials = json.loads(credentials_json)
                 # Set the GOOGLE_APPLICATION_CREDENTIALS environment variable
-                credentials_file = os.path.join(os.getcwd(), 'credentials.json')
+                credentials_file = os.path.join(os.getcwd(), 'gcp-credentials.json')
                 with open(credentials_file, 'w') as f:
                     json.dump(credentials, f)
                 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credentials_file
@@ -87,7 +87,7 @@ def embed_content(texts: list[str], task_type: str = "RETRIEVAL_DOCUMENT", title
             # Use the client.models.embed_content method with correct parameters
             response = client.models.embed_content(
                 model=EMBEDDING_MODEL_NAME,
-                text=text,  # Try 'text' parameter instead of 'content'
+                content=text,  # Use 'content' parameter instead of 'text'
                 task_type=task_type,
                 title=title,
                 output_dimensionality=768

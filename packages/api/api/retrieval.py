@@ -82,7 +82,46 @@ class HybridRetriever:
                 logger.info(f"Connected to SQLite database: {sqlite_path}")
             else:
                 logger.warning(f"SQLite database not found: {sqlite_path}")
-                self.sqlite_conn = None
+                # Create empty SQLite database with proper schema for API service
+                try:
+                    self.sqlite_conn = sqlite3.connect(str(sqlite_path))
+                    self.sqlite_conn.row_factory = sqlite3.Row
+                    cursor = self.sqlite_conn.cursor()
+                    
+                    # Create FTS5 table for keyword search
+                    cursor.execute("""
+                        CREATE VIRTUAL TABLE IF NOT EXISTS documents_fts 
+                        USING fts5(
+                            chunk_id UNINDEXED,
+                            content,
+                            title,
+                            heading_path,
+                            source_url UNINDEXED,
+                            anchor_link UNINDEXED,
+                            tokenize = 'porter'
+                        )
+                    """)
+                    
+                    # Create metadata table for chunk relationships
+                    cursor.execute("""
+                        CREATE TABLE IF NOT EXISTS chunk_metadata (
+                            chunk_id TEXT PRIMARY KEY,
+                            source_url TEXT,
+                            title TEXT,
+                            heading_path TEXT,
+                            anchor_link TEXT,
+                            token_count INTEGER,
+                            prev_id TEXT,
+                            next_id TEXT,
+                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                        )
+                    """)
+                    
+                    self.sqlite_conn.commit()
+                    logger.info(f"Created empty SQLite database: {sqlite_path}")
+                except Exception as e:
+                    logger.error(f"Failed to create SQLite database: {e}")
+                    self.sqlite_conn = None
             
             # Initialize embedder lazily
             self.embedder = None
