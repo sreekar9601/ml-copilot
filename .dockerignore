@@ -50,6 +50,9 @@ notebooks/
 chroma/
 *.chroma
 
+# Allow the populated SQLite database for keyword search
+!packages/api/data/bm25.db
+
 # Node / misc
 node_modules/
 dist/
