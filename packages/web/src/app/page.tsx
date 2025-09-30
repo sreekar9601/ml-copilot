@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { ChatInterface } from "@/components/chat/chat-interface";
-import { LandingPageSimple } from "@/components/landing-page-simple";
+import { LandingPageEnhanced } from "@/components/landing-page-enhanced";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function Home() {
   const [showChat, setShowChat] = useState(false);
@@ -43,6 +44,7 @@ export default function Home() {
                 <span>Powered by</span>
                 <span className="font-medium">Google Gemini</span>
               </div>
+              <ThemeToggle />
             </div>
           </div>
         </div>
@@ -51,7 +53,7 @@ export default function Home() {
       {/* Main Content */}
       <main className="flex-1">
         {showChat ? (
-          <div className="h-full container mx-auto px-4 py-6 max-w-5xl animate-in slide-in-from-bottom-4 fade-in duration-500">
+          <div className="h-full container mx-auto px-4 py-6 max-w-7xl animate-in slide-in-from-bottom-4 fade-in duration-500">
             <div className="h-full">
               <ChatInterface 
                 className="h-full shadow-lg rounded-xl border bg-card/50 backdrop-blur-sm" 
@@ -60,7 +62,7 @@ export default function Home() {
             </div>
           </div>
         ) : (
-          <LandingPageSimple onStartChat={handleStartChat} />
+          <LandingPageEnhanced onStartChat={handleStartChat} />
         )}
       </main>
 

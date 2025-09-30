@@ -45,9 +45,9 @@ export function ChatMessage({ message, className }: ChatMessageProps) {
       
       <Card
         className={cn(
-          "max-w-[85%] relative group break-words overflow-wrap-anywhere",
+          "w-full relative group break-words overflow-wrap-anywhere",
           isUser
-            ? "bg-gradient-to-br from-primary to-primary/90 text-primary-foreground shadow-lg"
+            ? "bg-gradient-to-br from-primary to-primary/90 text-primary-foreground shadow-lg max-w-[75%]"
             : "bg-card/80 backdrop-blur-sm border border-border/50"
         )}
       >
@@ -71,8 +71,8 @@ export function ChatMessage({ message, className }: ChatMessageProps) {
               <p className="text-sm leading-relaxed break-words">{message.content}</p>
             </div>
           ) : (
-            <div className="space-y-4">
-              <div className="prose prose-sm max-w-none dark:prose-invert prose-headings:font-semibold prose-h1:text-lg prose-h2:text-base prose-h3:text-sm prose-p:leading-relaxed prose-ul:my-2 prose-ol:my-2 prose-li:my-1 prose-strong:text-foreground prose-strong:font-semibold break-words overflow-wrap-anywhere hyphens-auto">
+            <div className="space-y-4 w-full">
+              <div className="prose prose-base max-w-none dark:prose-invert prose-headings:font-semibold prose-h1:text-lg prose-h2:text-base prose-h3:text-sm prose-p:leading-relaxed prose-ul:my-2 prose-ol:my-2 prose-li:my-1 prose-strong:text-foreground prose-strong:font-semibold break-words overflow-wrap-anywhere hyphens-auto w-full">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={{
@@ -116,6 +116,23 @@ export function ChatMessage({ message, className }: ChatMessageProps) {
                           </div>
                         );
                       }
+                      
+                      // Check if the inline code contains a URL and make it clickable
+                      const text = String(children);
+                      const urlRegex = /^https?:\/\/.+/;
+                      if (urlRegex.test(text)) {
+                        return (
+                          <a 
+                            href={text} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-primary hover:text-primary/80 underline font-mono text-sm break-all"
+                          >
+                            {children}
+                          </a>
+                        );
+                      }
+                      
                       return (
                         <code className="bg-gradient-to-r from-primary/10 to-primary/5 px-2 py-1 rounded text-sm font-mono border border-primary/20 text-primary">
                           {children}
@@ -189,11 +206,12 @@ export function ChatMessage({ message, className }: ChatMessageProps) {
                 </ReactMarkdown>
               </div>
               
-              {message.sources && message.sources.length > 0 && (
-                <div className="border-t pt-4">
-                  <Citations sources={message.sources} />
-                </div>
-              )}
+                  {/* Show citations from RAG metadata (not from LLM-generated text) */}
+                  {message.sources && message.sources.length > 0 && (
+                    <div className="border-t pt-4">
+                      <Citations sources={message.sources} />
+                    </div>
+                  )}
             </div>
           )}
         </CardContent>

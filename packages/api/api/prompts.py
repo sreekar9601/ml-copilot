@@ -21,7 +21,7 @@ FORMATTING:
 - Use clear headings and bullet points for readability
 - Include relevant code snippets with proper formatting
 - Add practical tips and best practices when evident from context
-- End with a "References" section listing the source chunks used
+- DO NOT include a "References" section - the system will automatically show sources
 
 CONTEXT CHUNKS:
 {context_chunks}
@@ -79,7 +79,7 @@ FORMATTING GUIDELINES:
 - Include bullet points for lists and key points
 - Format code blocks with proper syntax highlighting
 - Add practical tips in callout format when appropriate
-- Conclude with a "References" section listing sources
+- DO NOT include a "References" section - the system will automatically show sources
 
 CONTEXT CHUNKS:
 {context_chunks}

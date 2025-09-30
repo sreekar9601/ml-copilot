@@ -341,6 +341,13 @@ class HybridRetriever:
         
         # Sort by RRF score (descending)
         fused_results = sorted(all_results.values(), key=lambda x: x.score, reverse=True)
+
+        # Keep raw RRF scores - don't normalize artificially
+        # The raw RRF scores are more meaningful than normalized percentages
+        # Only ensure scores are positive and reasonable
+        for result in fused_results:
+            # Ensure score is positive and not too high
+            result.score = max(0.0, min(result.score, 1.0))
         
         # Update ranks
         for i, result in enumerate(fused_results):
@@ -381,6 +388,9 @@ class HybridRetriever:
                 
                 prev_id, next_id = row['prev_id'], row['next_id']
                 
+                # Reset expansion index for each primary result
+                expansion_distance = 0
+                
                 # Fetch previous chunks
                 current_prev = prev_id
                 for _ in range(max_expansions):
@@ -389,6 +399,12 @@ class HybridRetriever:
                     
                     prev_chunk = self._fetch_chunk_by_id(current_prev)
                     if prev_chunk:
+                        # Give context chunks a much lower score than primary chunks
+                        # Score decreases with distance from primary chunk
+                        expansion_distance += 1
+                        # Context chunks get only 5-15% of the primary chunk's score
+                        prev_chunk.score = result.score * 0.1 / expansion_distance
+                        
                         # Insert before current result in expanded_results
                         insert_idx = next(i for i, r in enumerate(expanded_results) 
                                         if r.chunk_id == result.chunk_id)
@@ -410,6 +426,11 @@ class HybridRetriever:
                     
                     next_chunk = self._fetch_chunk_by_id(current_next)
                     if next_chunk:
+                        # Give context chunks a much lower score than primary chunks
+                        expansion_distance += 1
+                        # Context chunks get only 5-15% of the primary chunk's score
+                        next_chunk.score = result.score * 0.1 / expansion_distance
+                        
                         expanded_results.append(next_chunk)
                         processed_ids.add(current_next)
                         
@@ -450,7 +471,7 @@ class HybridRetriever:
                     chunk_id=row['chunk_id'],
                     content=row['content'],
                     metadata=metadata,
-                    score=0.0,  # Context expansion doesn't have relevance score
+                    score=0.01,  # Low initial score, will be updated by expand_context
                     rank=0
                 )
             

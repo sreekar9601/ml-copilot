@@ -17,7 +17,7 @@ from pydantic import BaseModel, Field
 from .clients import get_generation_model, GENERATION_MODEL_NAME
 from .config import settings
 # Import retrieval modules lazily to avoid startup failures
-# from .retrieval import retrieve_documents, RetrievalResult
+from .retrieval import retrieve_documents, RetrievalResult
 from .prompts import SYSTEM_PROMPT, ENHANCED_SYSTEM_PROMPT, CONTEXT_CHUNK_TEMPLATE
 
 # Configure logging
@@ -396,8 +396,11 @@ async def ask_question_advanced(request: AdvancedQueryRequest):
                 detail="No relevant documents found. The knowledge base might be empty or your query is too specific."
             )
         
+        # Filter sources by relevance and query terms
+        filtered_results = filter_relevant_sources(results, request.q)
+        
         # Format context for the LLM
-        context_chunks = format_context_chunks(results)
+        context_chunks = format_context_chunks(filtered_results)
         
         # Generate answer
         generation_start = time.time()
@@ -407,7 +410,7 @@ async def ask_question_advanced(request: AdvancedQueryRequest):
         # Prepare sources
         sources = []
         if request.include_sources:
-            for result in results:
+            for result in filtered_results:
                 sources.append(SourceInfo(
                     chunk_id=result.chunk_id,
                     title=result.metadata.get('title', 'Unknown'),
@@ -432,7 +435,7 @@ async def ask_question_advanced(request: AdvancedQueryRequest):
             retrieval_time_ms=retrieval_time,
             generation_time_ms=generation_time,
             total_time_ms=total_time,
-            chunks_retrieved=len(results)
+            chunks_retrieved=len(filtered_results)
         )
         
     except HTTPException:
@@ -542,8 +545,11 @@ async def ask_question(request: QueryRequest):
                 detail="No relevant documents found. The knowledge base might be empty or your query is too specific."
             )
         
+        # Filter sources by relevance and query terms
+        filtered_results = filter_relevant_sources(results, request.q)
+        
         # Format context for the LLM
-        context_chunks = format_context_chunks(results)
+        context_chunks = format_context_chunks(filtered_results)
         
         # Generate answer
         generation_start = time.time()
@@ -553,7 +559,7 @@ async def ask_question(request: QueryRequest):
         # Prepare sources
         sources = []
         if request.include_sources:
-            for result in results:
+            for result in filtered_results:
                 sources.append(SourceInfo(
                     chunk_id=result.chunk_id,
                     title=result.metadata.get('title', 'Unknown'),
@@ -578,7 +584,7 @@ async def ask_question(request: QueryRequest):
             retrieval_time_ms=retrieval_time,
             generation_time_ms=generation_time,
             total_time_ms=total_time,
-            chunks_retrieved=len(results)
+            chunks_retrieved=len(filtered_results)
         )
         
     except HTTPException:
@@ -806,6 +812,62 @@ async def generate_howto_tutorial(request: HowToRequest):
     except Exception as e:
         logger.error(f"Error generating how-to tutorial: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to generate tutorial: {str(e)}")
+
+
+def filter_relevant_sources(results: List[RetrievalResult], query: str) -> List[RetrievalResult]:
+    """Filter sources by relevance and query terms to exclude clearly irrelevant results."""
+    if not results:
+        return results
+    
+    # Extract key terms from query
+    query_lower = query.lower()
+    key_terms = set()
+    
+    # Add explicit terms from query
+    for term in query_lower.split():
+        if len(term) > 2:  # Skip short words
+            key_terms.add(term)
+    
+    # Add domain-specific synonyms
+    if 'pytorch' in query_lower or 'torch' in query_lower:
+        key_terms.update(['pytorch', 'torch', 'dataloader', 'tensor', 'model'])
+    if 'mlflow' in query_lower:
+        key_terms.update(['mlflow', 'tracking', 'experiment', 'model', 'registry'])
+    if 'docker' in query_lower:
+        key_terms.update(['docker', 'container', 'image', 'deployment'])
+    if 'kubernetes' in query_lower or 'k8s' in query_lower:
+        key_terms.update(['kubernetes', 'k8s', 'pod', 'service', 'deployment'])
+    
+    filtered_results = []
+    for result in results:
+        # Check if result is relevant based on content and metadata
+        content_lower = result.content.lower()
+        title_lower = result.metadata.get('title', '').lower()
+        vendor = result.metadata.get('vendor', '').lower()
+        topics = result.metadata.get('topics', [])
+        
+        # Calculate relevance score based on term matches
+        term_matches = sum(1 for term in key_terms if term in content_lower or term in title_lower)
+        relevance_ratio = term_matches / len(key_terms) if key_terms else 0
+        
+        # Include if:
+        # 1. High relevance ratio (>0.3) OR
+        # 2. High score (>0.1) AND some term matches OR
+        # 3. Vendor matches query domain
+        is_relevant = (
+            relevance_ratio > 0.3 or
+            (result.score > 0.1 and term_matches > 0) or
+            any(term in vendor for term in key_terms)
+        )
+        
+        if is_relevant:
+            filtered_results.append(result)
+    
+    # If we filtered out too many, keep at least the top 3
+    if len(filtered_results) < 3 and len(results) >= 3:
+        filtered_results = results[:3]
+    
+    return filtered_results
 
 
 @app.get("/")
