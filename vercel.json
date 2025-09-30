@@ -1,7 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "pnpm build",
   "installCommand": "pnpm install --filter web --frozen-lockfile",
   "framework": "nextjs",
-  "outputDirectory": ".next"
+  "buildCommand": "echo '--- VERCEL BUILD ENV DEBUG ---' && echo '--- Current Directory ---' && pwd && echo '--- Listing files (.) ---' && ls -la && echo '--- Listing files (src) ---' && ls -la src/ || true && echo '--- Contents: tsconfig.json ---' && (cat tsconfig.json || true) && echo '--- Contents: next.config.ts ---' && (cat next.config.ts || true) && echo '--- End of Debug ---' && exit 1"
 }
