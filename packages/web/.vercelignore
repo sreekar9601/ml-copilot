@@ -1,0 +1,6 @@
+# Vercel ignore file
+node_modules
+.env.local
+.env.production
+.next
+*.log

@@ -5,8 +5,8 @@ const nextConfig: NextConfig = {
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
   },
-  // Ensure proper build output for Vercel
-  output: 'standalone',
+  // Remove standalone output for Vercel compatibility
+  // Vercel handles the build output automatically
 };
 
 export default nextConfig;

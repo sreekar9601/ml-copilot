@@ -45,10 +45,10 @@ export function ChatMessage({ message, className }: ChatMessageProps) {
       
       <Card
         className={cn(
-          "max-w-[85%] overflow-hidden relative group",
+          "max-w-[85%] overflow-hidden relative group break-words",
           isUser
-            ? "bg-primary text-primary-foreground"
-            : "bg-muted/50"
+            ? "bg-gradient-to-br from-primary to-primary/90 text-primary-foreground shadow-lg"
+            : "bg-card/80 backdrop-blur-sm border border-border/50"
         )}
       >
         {!isUser && (
@@ -67,10 +67,12 @@ export function ChatMessage({ message, className }: ChatMessageProps) {
         )}
         <CardContent className="px-4 py-3">
           {isUser ? (
-            <p className="text-sm">{message.content}</p>
+            <div className="space-y-2">
+              <p className="text-sm leading-relaxed break-words">{message.content}</p>
+            </div>
           ) : (
             <div className="space-y-4">
-              <div className="prose prose-sm max-w-none dark:prose-invert prose-headings:font-semibold prose-h1:text-lg prose-h2:text-base prose-h3:text-sm prose-p:leading-relaxed prose-ul:my-2 prose-ol:my-2 prose-li:my-1 prose-strong:text-foreground prose-strong:font-semibold">
+              <div className="prose prose-sm max-w-none dark:prose-invert prose-headings:font-semibold prose-h1:text-lg prose-h2:text-base prose-h3:text-sm prose-p:leading-relaxed prose-ul:my-2 prose-ol:my-2 prose-li:my-1 prose-strong:text-foreground prose-strong:font-semibold break-words overflow-wrap-anywhere">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={{
