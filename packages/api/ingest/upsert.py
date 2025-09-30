@@ -169,6 +169,9 @@ class DatabaseManager:
         
         # Upsert to vector DB (prefer Qdrant if configured via env)
         use_qdrant = bool(os.getenv("QDRANT_URL") and os.getenv("QDRANT_API_KEY"))
+        logger.info(f"Qdrant URL: {os.getenv('QDRANT_URL')}")
+        logger.info(f"Qdrant API Key: {'Set' if os.getenv('QDRANT_API_KEY') else 'Not set'}")
+        logger.info(f"Using Qdrant: {use_qdrant}")
         if use_qdrant:
             try:
                 client = self.initialize_qdrant(
@@ -179,7 +182,7 @@ class DatabaseManager:
                 )
                 points = [
                     qmodels.PointStruct(
-                        id=chunk_ids[i],
+                        id=hash(chunk_ids[i]) % (2**63),  # Convert string ID to integer
                         vector=embeddings[i].tolist(),
                         payload={
                             "text": contents[i],
