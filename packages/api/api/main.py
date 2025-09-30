@@ -18,7 +18,7 @@ from .clients import get_generation_model, GENERATION_MODEL_NAME
 from .config import settings
 # Import retrieval modules lazily to avoid startup failures
 # from .retrieval import retrieve_documents, RetrievalResult
-from .prompts import SYSTEM_PROMPT, CONTEXT_CHUNK_TEMPLATE
+from .prompts import SYSTEM_PROMPT, ENHANCED_SYSTEM_PROMPT, CONTEXT_CHUNK_TEMPLATE
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -224,6 +224,81 @@ def generate_answer(query: str, context_chunks: str) -> str:
         return f"I encountered an error while processing your question: {str(e)}"
 
 
+def generate_enhanced_answer(query: str, results: List[Any]) -> str:
+    """Generate enhanced, conversational answer using Gemini."""
+    try:
+        client = get_gemini_model()
+        
+        # Create enhanced context with source information
+        enhanced_context = []
+        source_map = {}
+        
+        for i, result in enumerate(results):
+            chunk_id = f"source_{i+1}"
+            source_map[chunk_id] = {
+                'title': result.metadata.get('title', 'Unknown'),
+                'url': result.metadata.get('source_url', ''),
+                'section': result.metadata.get('heading_path', ''),
+                'vendor': result.metadata.get('vendor', ''),
+                'doc_type': result.metadata.get('doc_type', ''),
+                'technical_depth': result.metadata.get('technical_depth', '')
+            }
+            
+            enhanced_context.append(f"""
+--- {chunk_id} ---
+Title: {source_map[chunk_id]['title']}
+Section: {source_map[chunk_id]['section']}
+Vendor: {source_map[chunk_id]['vendor']}
+Content: {result.content}
+---""")
+        
+        enhanced_context_str = "\n".join(enhanced_context)
+        
+        prompt = ENHANCED_SYSTEM_PROMPT.format(
+            context_chunks=enhanced_context_str,
+            user_question=query
+        )
+        
+        # Generate response using Vertex AI
+        response = client.models.generate_content(
+            model=GENERATION_MODEL_NAME,
+            contents=prompt
+        )
+        
+        if response.text:
+            # Post-process to add references section
+            answer = response.text.strip()
+            
+            # Add references section if not already present
+            if "## References" not in answer and "References:" not in answer:
+                references = "\n\n## References\n"
+                for chunk_id, info in source_map.items():
+                    ref_line = f"- **{info['title']}"
+                    if info['section']:
+                        ref_line += f"** - {info['section']}"
+                    else:
+                        ref_line += "**"
+                    
+                    if info['vendor']:
+                        ref_line += f" ({info['vendor']})"
+                    
+                    if info['url']:
+                        ref_line += f"\n  {info['url']}"
+                    
+                    references += ref_line + "\n"
+                
+                answer += references
+            
+            return answer
+        else:
+            logger.error("Empty response from Gemini")
+            return "I encountered an error while processing your question."
+    
+    except Exception as e:
+        logger.error(f"Error generating enhanced answer: {e}")
+        return f"I encountered an error while processing your question: {str(e)}"
+
+
 @app.get("/health")
 async def health_check():
     """Simple health check endpoint that always returns 200 OK."""
@@ -364,6 +439,77 @@ async def ask_question_advanced(request: AdvancedQueryRequest):
         raise
     except Exception as e:
         logger.error(f"Error processing advanced query '{request.q}': {e}")
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+
+
+@app.post("/ask-v2", response_model=QueryResponse)
+async def ask_question_v2(request: QueryRequest):
+    """Enhanced Q&A endpoint with conversational responses."""
+    
+    start_time = time.time()
+    
+    if not request.q.strip():
+        raise HTTPException(status_code=400, detail="Query cannot be empty")
+    
+    try:
+        # Import advanced retrieval modules lazily
+        from .advanced_retrieval import advanced_retrieve_documents, RetrievalResult
+        
+        # Retrieve relevant documents using advanced retrieval
+        retrieval_start = time.time()
+        results = advanced_retrieve_documents(
+            request.q, 
+            top_k=request.top_k,
+            use_expansion=request.use_expansion,
+            use_reranking=request.use_reranking
+        )
+        retrieval_time = (time.time() - retrieval_start) * 1000
+        
+        if not results:
+            raise HTTPException(
+                status_code=404, 
+                detail="No relevant documents found. The knowledge base might be empty or your query is too specific."
+            )
+        
+        # Generate enhanced answer
+        generation_start = time.time()
+        answer = generate_enhanced_answer(request.q, results)
+        generation_time = (time.time() - generation_start) * 1000
+        
+        # Prepare sources with enhanced metadata
+        sources = []
+        if request.include_sources:
+            for result in results:
+                sources.append(SourceInfo(
+                    chunk_id=result.chunk_id,
+                    title=result.metadata.get('title', 'Unknown'),
+                    url=result.metadata.get('source_url', ''),
+                    heading_path=result.metadata.get('heading_path', ''),
+                    anchor_link=result.metadata.get('anchor_link', ''),
+                    relevance_score=result.score,
+                    vendor=result.metadata.get('vendor'),
+                    doc_type=result.metadata.get('doc_type'),
+                    topics=result.metadata.get('topics', []),
+                    quality_score=result.metadata.get('quality_score'),
+                    has_code_examples=result.metadata.get('has_code_examples', False),
+                    technical_depth=result.metadata.get('technical_depth')
+                ))
+        
+        processing_time = time.time() - start_time
+        
+        return QueryResponse(
+            answer=answer,
+            sources=sources,
+            processing_time=round(processing_time * 1000, 2),
+            retrieval_time=round(retrieval_time, 2),
+            generation_time=round(generation_time, 2),
+            total_chunks=len(results)
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error processing query '{request.q}': {e}")
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
 
@@ -671,6 +817,7 @@ async def root():
         "version": "1.0.0",
         "endpoints": {
             "/ask": "POST - Ask questions about ML documentation (standard retrieval)",
+            "/ask-v2": "POST - Enhanced Q&A with conversational responses (RECOMMENDED)",
             "/ask-advanced": "POST - Ask questions with advanced query expansion and re-ranking",
             "/howto": "POST - Generate step-by-step tutorials with citations",
             "/health": "GET - Health check",
