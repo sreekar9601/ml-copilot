@@ -1,0 +1,7 @@
+# Ignore everything except the web package
+packages/api
+packages/ingestion-service
+node_modules
+.env.local
+.env.production
+*.log

@@ -12,7 +12,8 @@ interface ChatRequest {
 // Use environment variable for API URL - required for security
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
-if (!API_BASE_URL) {
+// Only check for API_BASE_URL on the client side to avoid build-time errors
+if (typeof window !== 'undefined' && !API_BASE_URL) {
   throw new Error(
     "NEXT_PUBLIC_API_URL environment variable is required. " +
     "Please set it in your Vercel environment variables or .env.local file."
