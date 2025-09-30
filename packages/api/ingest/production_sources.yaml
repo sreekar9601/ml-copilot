@@ -1,0 +1,159 @@
+# Production-grade data sources for ML Documentation Copilot
+# Curated list of high-quality, reliable documentation sources
+
+data_sources:
+  # Core ML Frameworks
+  pytorch:
+    name: "PyTorch Documentation"
+    base_url: "https://pytorch.org"
+    sources:
+      - url: "https://pytorch.org/tutorials/"
+        type: "tutorials"
+        priority: "high"
+        topics: ["pytorch", "deep-learning", "tutorials"]
+      - url: "https://pytorch.org/docs/stable/"
+        type: "api_reference"
+        priority: "high"
+        topics: ["pytorch", "api", "reference"]
+      - url: "https://pytorch.org/tutorials/beginner/"
+        type: "beginner_guides"
+        priority: "high"
+        topics: ["pytorch", "beginner", "tutorials"]
+      - url: "https://pytorch.org/tutorials/advanced/"
+        type: "advanced_guides"
+        priority: "medium"
+        topics: ["pytorch", "advanced", "optimization"]
+
+  # ML Operations & Tracking
+  mlflow:
+    name: "MLflow Documentation"
+    base_url: "https://mlflow.org"
+    sources:
+      - url: "https://mlflow.org/docs/latest/"
+        type: "documentation"
+        priority: "high"
+        topics: ["mlflow", "mlops", "tracking", "model-registry"]
+      - url: "https://mlflow.org/docs/latest/tracking.html"
+        type: "tracking_guide"
+        priority: "high"
+        topics: ["mlflow", "tracking", "experiments"]
+      - url: "https://mlflow.org/docs/latest/model-registry.html"
+        type: "model_registry"
+        priority: "high"
+        topics: ["mlflow", "model-registry", "deployment"]
+
+  # Cloud ML Services
+  aws_sagemaker:
+    name: "AWS SageMaker Documentation"
+    base_url: "https://docs.aws.amazon.com"
+    sources:
+      - url: "https://docs.aws.amazon.com/sagemaker/latest/dg/"
+        type: "developer_guide"
+        priority: "high"
+        topics: ["aws", "sagemaker", "cloud-ml", "deployment"]
+      - url: "https://docs.aws.amazon.com/sagemaker/latest/dg/model-deploy.html"
+        type: "deployment_guide"
+        priority: "high"
+        topics: ["aws", "sagemaker", "deployment", "endpoints"]
+      - url: "https://docs.aws.amazon.com/sagemaker/latest/dg/train-model.html"
+        type: "training_guide"
+        priority: "high"
+        topics: ["aws", "sagemaker", "training", "algorithms"]
+
+  # Container Orchestration
+  kubernetes:
+    name: "Kubernetes Documentation"
+    base_url: "https://kubernetes.io"
+    sources:
+      - url: "https://kubernetes.io/docs/concepts/"
+        type: "concepts"
+        priority: "high"
+        topics: ["kubernetes", "concepts", "architecture"]
+      - url: "https://kubernetes.io/docs/concepts/services-networking/"
+        type: "networking"
+        priority: "high"
+        topics: ["kubernetes", "networking", "services"]
+      - url: "https://kubernetes.io/docs/concepts/workloads/"
+        type: "workloads"
+        priority: "high"
+        topics: ["kubernetes", "workloads", "deployments"]
+      - url: "https://kubernetes.io/docs/tutorials/"
+        type: "tutorials"
+        priority: "medium"
+        topics: ["kubernetes", "tutorials", "hands-on"]
+
+  # Containerization
+  docker:
+    name: "Docker Documentation"
+    base_url: "https://docs.docker.com"
+    sources:
+      - url: "https://docs.docker.com/get-started/"
+        type: "getting_started"
+        priority: "high"
+        topics: ["docker", "containers", "getting-started"]
+      - url: "https://docs.docker.com/build/"
+        type: "building"
+        priority: "high"
+        topics: ["docker", "building", "images"]
+      - url: "https://docs.docker.com/compose/"
+        type: "orchestration"
+        priority: "medium"
+        topics: ["docker", "compose", "orchestration"]
+
+  # Model Serving
+  ray_serve:
+    name: "Ray Serve Documentation"
+    base_url: "https://docs.ray.io"
+    sources:
+      - url: "https://docs.ray.io/en/latest/serve/"
+        type: "serve_guide"
+        priority: "high"
+        topics: ["ray", "serve", "model-serving", "scaling"]
+      - url: "https://docs.ray.io/en/latest/serve/tutorials/"
+        type: "serve_tutorials"
+        priority: "medium"
+        topics: ["ray", "serve", "tutorials", "examples"]
+
+  kserve:
+    name: "KServe Documentation"
+    base_url: "https://kserve.github.io"
+    sources:
+      - url: "https://kserve.github.io/website/latest/"
+        type: "documentation"
+        priority: "high"
+        topics: ["kserve", "model-serving", "kubernetes", "inference"]
+
+# Quality filters and validation rules
+quality_standards:
+  min_content_length: 100  # Minimum characters for useful content
+  max_content_length: 50000  # Maximum to avoid noise
+  required_elements:
+    - "title"
+    - "content"
+    - "source_url"
+  content_quality_checks:
+    - "no_empty_sections"
+    - "has_code_examples"
+    - "proper_heading_structure"
+  duplicate_detection: true
+  language_detection: "en"  # English only for now
+
+# Scraping configuration
+scraping_config:
+  user_agent: "ML-Docs-Copilot/1.0 (Educational Purpose)"
+  rate_limit: 1  # seconds between requests
+  timeout: 30  # seconds
+  retry_attempts: 3
+  respect_robots_txt: true
+  follow_redirects: true
+  max_depth: 2  # How deep to follow links
+  exclude_patterns:
+    - "*/api/*"  # Skip raw API endpoints
+    - "*/changelog*"
+    - "*/version*"
+    - "*/download*"
+  include_patterns:
+    - "*/tutorial*"
+    - "*/guide*"
+    - "*/docs/*"
+    - "*/documentation/*"

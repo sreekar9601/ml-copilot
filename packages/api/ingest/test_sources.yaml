@@ -1,0 +1,19 @@
+data_sources:
+  pytorch:
+    name: PyTorch Documentation
+    sources:
+    - priority: high
+      topics:
+      - pytorch
+      - tutorial
+      - beginner
+      type: tutorial
+      url: https://pytorch.org/tutorials/beginner/basics/quickstart_tutorial.html
+quality_standards:
+  max_content_length: 50000
+  min_content_length: 100
+scraping_config:
+  rate_limit: 2
+  retry_attempts: 3
+  timeout: 30
+  user_agent: ML-Docs-Copilot/1.0
