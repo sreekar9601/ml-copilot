@@ -1,0 +1,386 @@
+# Enhanced Data Sources Configuration for ML Copilot
+# Organized by vendor with rich metadata for efficient cross-source retrieval
+
+data_sources:
+  
+  # PyTorch Ecosystem
+  pytorch:
+    vendor: "pytorch"
+    organization: "Meta AI"
+    official_domain: "pytorch.org"
+    priority: "high"
+    
+    core_documentation:
+      - name: "PyTorch Data Loading and Processing"
+        url: "https://pytorch.org/docs/stable/data.html"
+        type: "api_reference"
+        product: "pytorch-core"
+        version: "stable"
+        topics: ["data_loading", "dataloader", "dataset", "transforms"]
+        entities: ["DataLoader", "Dataset", "IterableDataset", "Sampler"]
+        use_cases: ["training", "inference", "data_pipeline"]
+        priority: "high"
+        estimated_chunks: 50
+        
+      - name: "PyTorch Neural Network Module"
+        url: "https://pytorch.org/docs/stable/nn.html"
+        type: "api_reference"
+        product: "pytorch-core"
+        version: "stable"
+        topics: ["neural_networks", "layers", "loss_functions", "optimization"]
+        entities: ["Module", "Sequential", "Linear", "Conv2d", "CrossEntropyLoss"]
+        use_cases: ["model_building", "training", "inference"]
+        priority: "high"
+        estimated_chunks: 80
+        
+      - name: "PyTorch Distributed Training"
+        url: "https://pytorch.org/docs/stable/distributed.html"
+        type: "api_reference"
+        product: "pytorch-core"
+        version: "stable"
+        topics: ["distributed_training", "ddp", "rpc", "multiprocessing"]
+        entities: ["DistributedDataParallel", "DataParallel", "RPC"]
+        use_cases: ["distributed_training", "scaling", "multi_gpu"]
+        priority: "high"
+        estimated_chunks: 60
+        
+    tutorials:
+      - name: "PyTorch Quickstart Tutorial"
+        url: "https://pytorch.org/tutorials/beginner/basics/quickstart_tutorial.html"
+        type: "tutorial"
+        product: "pytorch-tutorials"
+        version: "latest"
+        topics: ["getting_started", "basic_workflow", "tensors", "models"]
+        entities: ["torch.Tensor", "nn.Module", "DataLoader"]
+        use_cases: ["onboarding", "learning", "first_steps"]
+        priority: "high"
+        estimated_chunks: 20
+        
+      - name: "PyTorch Data Tutorial"
+        url: "https://pytorch.org/tutorials/beginner/basics/data_tutorial.html"
+        type: "tutorial"
+        product: "pytorch-tutorials"
+        version: "latest"
+        topics: ["data_loading", "custom_datasets", "transforms"]
+        entities: ["Dataset", "DataLoader", "transforms"]
+        use_cases: ["data_preparation", "custom_data", "preprocessing"]
+        priority: "high"
+        estimated_chunks: 25
+        
+    serving:
+      - name: "TorchServe Model Serving"
+        url: "https://pytorch.org/serve/"
+        type: "platform_guide"
+        product: "torchserve"
+        version: "latest"
+        topics: ["model_serving", "deployment", "inference", "scaling"]
+        entities: ["TorchServe", "ModelArchiver", "Handler"]
+        use_cases: ["production_serving", "model_deployment", "inference_api"]
+        priority: "medium"
+        estimated_chunks: 40
+
+  # MLflow Ecosystem
+  mlflow:
+    vendor: "mlflow"
+    organization: "Databricks"
+    official_domain: "mlflow.org"
+    priority: "high"
+    
+    core_documentation:
+      - name: "MLflow Tracking"
+        url: "https://mlflow.org/docs/latest/tracking.html"
+        type: "feature_guide"
+        product: "mlflow-tracking"
+        version: "latest"
+        topics: ["experiment_tracking", "metrics", "parameters", "artifacts"]
+        entities: ["MLflowClient", "start_run", "log_metric", "log_param"]
+        use_cases: ["experiment_management", "metrics_tracking", "model_versioning"]
+        priority: "high"
+        estimated_chunks: 45
+        
+      - name: "MLflow Model Registry"
+        url: "https://mlflow.org/docs/latest/model-registry.html"
+        type: "feature_guide"
+        product: "mlflow-registry"
+        version: "latest"
+        topics: ["model_registry", "versioning", "governance", "staging"]
+        entities: ["ModelRegistry", "RegisteredModel", "ModelVersion"]
+        use_cases: ["model_management", "model_governance", "collaboration"]
+        priority: "high"
+        estimated_chunks: 35
+        
+      - name: "MLflow Models"
+        url: "https://mlflow.org/docs/latest/models.html"
+        type: "feature_guide"
+        product: "mlflow-models"
+        version: "latest"
+        topics: ["model_format", "deployment", "serving", "packaging"]
+        entities: ["mlflow.pytorch", "mlflow.sklearn", "Model"]
+        use_cases: ["model_packaging", "deployment", "serving"]
+        priority: "high"
+        estimated_chunks: 40
+
+  # Ray Ecosystem
+  ray:
+    vendor: "ray"
+    organization: "Anyscale"
+    official_domain: "ray.io"
+    priority: "high"
+    
+    serve:
+      - name: "Ray Serve Architecture"
+        url: "https://docs.ray.io/en/latest/serve/architecture.html"
+        type: "architecture_guide"
+        product: "ray-serve"
+        version: "latest"
+        topics: ["architecture", "deployment", "scaling", "routing"]
+        entities: ["Deployment", "Application", "ServeHandle"]
+        use_cases: ["model_serving", "microservices", "scaling"]
+        priority: "high"
+        estimated_chunks: 30
+        
+      - name: "Ray Serve Getting Started"
+        url: "https://docs.ray.io/en/latest/serve/getting-started.html"
+        type: "tutorial"
+        product: "ray-serve"
+        version: "latest"
+        topics: ["getting_started", "basic_deployment", "fastapi_integration"]
+        entities: ["serve.run", "@serve.deployment", "FastAPI"]
+        use_cases: ["onboarding", "basic_serving", "api_development"]
+        priority: "high"
+        estimated_chunks: 25
+        
+      - name: "Ray Serve Production Guide"
+        url: "https://docs.ray.io/en/latest/serve/production-guide/deployment.html"
+        type: "production_guide"
+        product: "ray-serve"
+        version: "latest"
+        topics: ["production", "deployment", "monitoring", "scaling"]
+        entities: ["ServeConfig", "DeploymentConfig", "ApplicationConfig"]
+        use_cases: ["production_deployment", "ops", "monitoring"]
+        priority: "high"
+        estimated_chunks: 35
+
+  # KServe Ecosystem  
+  kserve:
+    vendor: "kserve"
+    organization: "Kubeflow"
+    official_domain: "kserve.github.io"
+    priority: "high"
+    
+    core:
+      - name: "KServe Getting Started"
+        url: "https://kserve.github.io/website/latest/get_started/"
+        type: "tutorial"
+        product: "kserve-core"
+        version: "latest"
+        topics: ["getting_started", "kubernetes", "inference", "deployment"]
+        entities: ["InferenceService", "Predictor", "Transformer"]
+        use_cases: ["kubernetes_deployment", "model_serving", "inference"]
+        priority: "high"
+        estimated_chunks: 30
+        
+      - name: "KServe InferenceService"
+        url: "https://kserve.github.io/website/latest/modelserving/inferenceservice/"
+        type: "api_reference"
+        product: "kserve-core"
+        version: "latest"
+        topics: ["inference_service", "predictor", "transformer", "explainer"]
+        entities: ["InferenceService", "Predictor", "Transformer", "Explainer"]
+        use_cases: ["model_deployment", "inference", "explanation"]
+        priority: "high"
+        estimated_chunks: 40
+        
+      - name: "KServe PyTorch Support"
+        url: "https://kserve.github.io/website/latest/modelserving/v1beta1/pytorch/"
+        type: "integration_guide"
+        product: "kserve-pytorch"
+        version: "latest"
+        topics: ["pytorch_integration", "model_serving", "custom_predictor"]
+        entities: ["PyTorchModel", "PyTorchPredictor"]
+        use_cases: ["pytorch_serving", "custom_models", "inference"]
+        priority: "medium"
+        estimated_chunks: 25
+
+  # AWS Ecosystem
+  aws:
+    vendor: "aws"
+    organization: "Amazon Web Services"
+    official_domain: "aws.amazon.com"
+    priority: "medium"
+    
+    sagemaker:
+      - name: "AWS SageMaker Developer Guide"
+        url: "https://docs.aws.amazon.com/sagemaker/latest/dg/"
+        type: "platform_guide"
+        product: "sagemaker"
+        version: "latest"
+        topics: ["managed_ml", "training", "deployment", "endpoints"]
+        entities: ["SageMaker", "TrainingJob", "Model", "Endpoint"]
+        use_cases: ["managed_training", "model_deployment", "cloud_ml"]
+        priority: "medium"
+        estimated_chunks: 100
+        
+      - name: "SageMaker PyTorch Container"
+        url: "https://docs.aws.amazon.com/sagemaker/latest/dg/pytorch.html"
+        type: "integration_guide"
+        product: "sagemaker-pytorch"
+        version: "latest"
+        topics: ["pytorch_integration", "training", "inference", "containers"]
+        entities: ["PyTorch", "PyTorchProcessor", "PyTorchModel"]
+        use_cases: ["pytorch_training", "managed_inference", "containers"]
+        priority: "medium"
+        estimated_chunks: 30
+
+  # Kubernetes Ecosystem
+  kubernetes:
+    vendor: "kubernetes"
+    organization: "CNCF"
+    official_domain: "kubernetes.io"
+    priority: "medium"
+    
+    core:
+      - name: "Kubernetes Workloads"
+        url: "https://kubernetes.io/docs/concepts/workloads/"
+        type: "concept_guide"
+        product: "kubernetes-core"
+        version: "latest"
+        topics: ["workloads", "pods", "deployments", "services"]
+        entities: ["Deployment", "Service", "Pod", "ReplicaSet"]
+        use_cases: ["container_orchestration", "deployment", "scaling"]
+        priority: "medium"
+        estimated_chunks: 50
+        
+      - name: "Kubernetes Jobs and CronJobs"
+        url: "https://kubernetes.io/docs/concepts/workloads/controllers/job/"
+        type: "concept_guide"
+        product: "kubernetes-batch"
+        version: "latest"
+        topics: ["batch_jobs", "cron_jobs", "parallel_processing"]
+        entities: ["Job", "CronJob", "ParallelJob"]
+        use_cases: ["batch_processing", "ml_training", "scheduled_jobs"]
+        priority: "medium"
+        estimated_chunks: 25
+
+# Curated Content Sources
+curated_content:
+  
+  architectural_decisions:
+    - name: "ML Serving Architecture Patterns"
+      path: "docs/curated/ml_serving_patterns.md"
+      type: "architecture_guide"
+      vendor: "multi_vendor"
+      topics: ["architecture", "patterns", "decision_making", "trade_offs"]
+      entities: ["Ray Serve", "KServe", "TorchServe", "SageMaker"]
+      use_cases: ["architecture_decisions", "technology_selection", "patterns"]
+      priority: "high"
+      estimated_chunks: 20
+      
+  best_practices:
+    - name: "MLOps Production Best Practices"
+      path: "docs/curated/mlops_production.md"
+      type: "best_practices"
+      vendor: "multi_vendor"
+      topics: ["mlops", "production", "monitoring", "deployment"]
+      entities: ["MLflow", "PyTorch", "Kubernetes", "Ray"]
+      use_cases: ["production_deployment", "ops", "best_practices"]
+      priority: "high"
+      estimated_chunks: 25
+      
+  integration_guides:
+    - name: "PyTorch + MLflow + Ray Integration"
+      path: "docs/curated/pytorch_mlflow_ray.md"
+      type: "integration_guide"
+      vendor: "multi_vendor"
+      topics: ["integration", "end_to_end", "pipeline", "workflow"]
+      entities: ["PyTorch", "MLflow", "Ray Serve", "DataLoader"]
+      use_cases: ["end_to_end_ml", "integration", "workflows"]
+      priority: "high"
+      estimated_chunks: 30
+
+# Alternative/Fallback Sources
+fallback_sources:
+  
+  local_documentation:
+    - name: "PyTorch Local Docs"
+      path: "docs/pytorch/"
+      type: "local_docs"
+      vendor: "pytorch"
+      priority: "high"
+      scan_pattern: "**/*.rst"
+      
+    - name: "MLflow Local Docs"
+      path: "docs/mlflow/"
+      type: "local_docs" 
+      vendor: "mlflow"
+      priority: "high"
+      scan_pattern: "**/*.md"
+
+# Configuration
+metadata_config:
+  
+  required_fields:
+    - vendor
+    - product
+    - type
+    - topics
+    - entities
+    - use_cases
+    - priority
+    
+  vendor_mapping:
+    pytorch.org: "pytorch"
+    mlflow.org: "mlflow"
+    ray.io: "ray"
+    kserve.github.io: "kserve"
+    aws.amazon.com: "aws"
+    kubernetes.io: "kubernetes"
+    docs.aws.amazon.com: "aws"
+    
+  entity_extraction:
+    patterns:
+      # Python classes/functions
+      - pattern: "class ([A-Z][a-zA-Z0-9_]*)"
+        group: 1
+        type: "class"
+      - pattern: "def ([a-z_][a-zA-Z0-9_]*)"
+        group: 1
+        type: "function"
+      # API endpoints
+      - pattern: "(/[a-z0-9/_-]+)"
+        group: 1
+        type: "endpoint"
+      # Configuration keys
+      - pattern: "([a-z_]+):\\s*"
+        group: 1
+        type: "config_key"
+        
+  topic_keywords:
+    data_loading: ["dataloader", "dataset", "batch", "transform", "sampler"]
+    distributed_training: ["ddp", "distributed", "parallel", "multi_gpu", "rank"]
+    model_serving: ["serve", "serving", "inference", "deployment", "endpoint"]
+    experiment_tracking: ["tracking", "experiment", "metric", "parameter", "artifact"]
+    model_registry: ["registry", "version", "staging", "production", "model"]
+    scaling: ["scale", "scaling", "autoscale", "replicas", "resources"]
+    monitoring: ["monitor", "metrics", "logs", "observability", "alerts"]
+    
+ingestion_strategy:
+  
+  processing_order:
+    1: ["pytorch", "mlflow", "ray", "kserve"]  # Core ML platforms
+    2: ["aws", "kubernetes"]                    # Infrastructure platforms  
+    3: ["curated_content"]                      # Multi-vendor content
+    4: ["fallback_sources"]                     # Local/backup content
+    
+  chunk_enhancement:
+    vendor_detection: true
+    entity_extraction: true
+    topic_classification: true
+    use_case_mapping: true
+    cross_reference_linking: true
+    
+  quality_thresholds:
+    min_chunk_length: 100
+    max_chunk_length: 2000
+    min_entity_count: 1
+    min_topic_count: 1

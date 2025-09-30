@@ -1,0 +1,10 @@
+urls:
+- https://pytorch.org/docs/stable/data.html
+- https://pytorch.org/docs/stable/nn.html
+- https://pytorch.org/tutorials/beginner/basics/quickstart_tutorial.html
+- https://mlflow.org/docs/latest/tracking.html
+- https://mlflow.org/docs/latest/model-registry.html
+- https://docs.ray.io/en/latest/serve/architecture.html
+- https://docs.ray.io/en/latest/serve/getting-started.html
+- https://kserve.github.io/website/latest/get_started/
+- https://kserve.github.io/website/latest/modelserving/inferenceservice/

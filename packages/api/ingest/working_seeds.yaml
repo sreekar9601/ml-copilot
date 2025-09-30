@@ -1,0 +1,15 @@
+urls:
+  # Working ML documentation URLs
+  - https://mlflow.org/docs/latest/tracking/
+  - https://mlflow.org/docs/latest/model-registry/
+  - https://kserve.github.io/website/latest/get_started/
+  - https://docs.aws.amazon.com/sagemaker/latest/dg/whatis.html
+  - https://docs.aws.amazon.com/sagemaker/latest/dg/model-deploy.html
+  - https://kubernetes.io/docs/concepts/services-networking/service/
+  - https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+  - https://docs.docker.com/get-started/overview/
+  - https://docs.docker.com/build/building/
+  - https://docs.docker.com/compose/
+  - https://pytorch.org/tutorials/beginner/introyt/introyt1_tutorial.html
+  - https://pytorch.org/tutorials/beginner/data_loading_tutorial.html
+  - https://pytorch.org/tutorials/beginner/basics/quickstart_tutorial.html
