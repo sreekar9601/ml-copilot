@@ -66,6 +66,9 @@ importers:
       '@tailwindcss/postcss':
         specifier: ^4
         version: 4.1.13
+      '@tsconfig/next':
+        specifier: ^2.0.3
+        version: 2.0.3
       '@types/node':
         specifier: ^20
         version: 20.19.17
@@ -971,6 +974,10 @@ packages:
       '@tanstack/query-core': 5.90.2
       react: 19.1.0
     dev: false
+
+  /@tsconfig/next@2.0.3:
+    resolution: {integrity: sha512-b4aKvmdWnv9aUy+NStUFlefirk3SItW20OJtbi5/ue9oMRaQtUYbN5zsr7OmV3rlx6Gp6h7A82gPoCXhrNGVPQ==}
+    dev: true
 
   /@tybys/wasm-util@0.10.1:
     resolution: {integrity: sha512-9tTaPJLSiejZKx+Bmog4uSubteqTvFrVrURwkmHixBo0G4seD0zUxp98E1DzUBJxLQ3NPwXrGKDiVjwx/DpPsg==}
