@@ -1,11 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { Source } from "@/types/chat";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Code, Star, BookOpen, Zap } from "lucide-react";
+import { ExternalLink, Code, BookOpen, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface CitationsProps {
@@ -14,7 +12,6 @@ interface CitationsProps {
 }
 
 export function Citations({ sources, className }: CitationsProps) {
-  const [expandedSource, setExpandedSource] = useState<string | null>(null);
 
   if (!sources || sources.length === 0) {
     return null;
@@ -40,26 +37,6 @@ export function Citations({ sources, className }: CitationsProps) {
     }
   };
 
-  const getQualityStars = (score?: number) => {
-    if (!score) return null;
-    const stars = Math.round(score * 5);
-    return (
-      <div className="flex items-center gap-1">
-        {[...Array(5)].map((_, i) => (
-          <Star
-            key={i}
-            className={cn(
-              "h-3 w-3",
-              i < stars ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
-            )}
-          />
-        ))}
-        <span className="text-xs text-muted-foreground ml-1">
-          {score.toFixed(1)}
-        </span>
-      </div>
-    );
-  };
 
   return (
     <div className={cn("space-y-2", className)}>
@@ -70,7 +47,7 @@ export function Citations({ sources, className }: CitationsProps) {
       </div>
       
       <div className="space-y-1">
-        {sources.map((source, index) => (
+        {sources.map((source) => (
           <div 
             key={source.chunk_id} 
             className="flex items-center justify-between p-2 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors group"

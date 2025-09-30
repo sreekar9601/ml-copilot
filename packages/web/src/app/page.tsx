@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { ChatInterface } from "@/components/chat/chat-interface";
 import { LandingPageSimple } from "@/components/landing-page-simple";
-import { cn } from "@/lib/utils";
 
 export default function Home() {
   const [showChat, setShowChat] = useState(false);

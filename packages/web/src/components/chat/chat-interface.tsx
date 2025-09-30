@@ -7,7 +7,7 @@ import { ChatInput } from "./chat-input";
 import { useChatApi } from "@/hooks/use-chat-api";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, MessageSquare } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ChatInterfaceProps {

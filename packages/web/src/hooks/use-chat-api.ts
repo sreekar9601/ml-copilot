@@ -9,11 +9,14 @@ interface ChatRequest {
   include_sources?: boolean;
 }
 
-// Use environment variable for API URL - no fallback for security
+// Use environment variable for API URL - required for security
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 if (!API_BASE_URL) {
-  throw new Error("NEXT_PUBLIC_API_URL environment variable is required");
+  throw new Error(
+    "NEXT_PUBLIC_API_URL environment variable is required. " +
+    "Please set it in your Vercel environment variables or .env.local file."
+  );
 }
 
 // Debug logging (only in development)
