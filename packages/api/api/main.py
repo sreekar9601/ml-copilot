@@ -141,6 +141,12 @@ class SourceInfo(BaseModel):
     heading_path: str
     anchor_link: str
     relevance_score: float
+    vendor: Optional[str] = None
+    doc_type: Optional[str] = None
+    topics: List[str] = []
+    quality_score: Optional[float] = None
+    has_code_examples: bool = False
+    technical_depth: Optional[str] = None
 
 
 class QueryResponse(BaseModel):
@@ -333,7 +339,13 @@ async def ask_question_advanced(request: AdvancedQueryRequest):
                     url=result.metadata.get('source_url', ''),
                     heading_path=result.metadata.get('heading_path', ''),
                     anchor_link=result.metadata.get('anchor_link', ''),
-                    relevance_score=result.score
+                    relevance_score=result.score,
+                    vendor=result.metadata.get('vendor'),
+                    doc_type=result.metadata.get('doc_type'),
+                    topics=result.metadata.get('topics', []),
+                    quality_score=result.metadata.get('quality_score'),
+                    has_code_examples=result.metadata.get('has_code_examples', False),
+                    technical_depth=result.metadata.get('technical_depth')
                 ))
         
         total_time = (time.time() - start_time) * 1000
@@ -402,7 +414,13 @@ async def ask_question(request: QueryRequest):
                     url=result.metadata.get('source_url', ''),
                     heading_path=result.metadata.get('heading_path', ''),
                     anchor_link=result.metadata.get('anchor_link', ''),
-                    relevance_score=result.score
+                    relevance_score=result.score,
+                    vendor=result.metadata.get('vendor'),
+                    doc_type=result.metadata.get('doc_type'),
+                    topics=result.metadata.get('topics', []),
+                    quality_score=result.metadata.get('quality_score'),
+                    has_code_examples=result.metadata.get('has_code_examples', False),
+                    technical_depth=result.metadata.get('technical_depth')
                 ))
         
         total_time = (time.time() - start_time) * 1000

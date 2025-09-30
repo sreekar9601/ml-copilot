@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Bot, User } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { Citations } from "./citations";
 import { cn } from "@/lib/utils";
 
 interface ChatMessageProps {
@@ -44,36 +45,66 @@ export function ChatMessage({ message, className }: ChatMessageProps) {
           {isUser ? (
             <p className="text-sm">{message.content}</p>
           ) : (
-            <div className="prose prose-sm max-w-none dark:prose-invert">
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                components={{
-                  p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-                  ul: ({ children }) => <ul className="list-disc list-inside mb-2">{children}</ul>,
-                  ol: ({ children }) => <ol className="list-decimal list-inside mb-2">{children}</ol>,
-                  li: ({ children }) => <li className="mb-1">{children}</li>,
-                  code: ({ children, className }) => {
-                    const isBlock = className?.includes("language-");
-                    if (isBlock) {
+            <div className="space-y-4">
+              <div className="prose prose-sm max-w-none dark:prose-invert prose-headings:font-semibold prose-h1:text-lg prose-h2:text-base prose-h3:text-sm prose-p:leading-relaxed prose-ul:my-2 prose-ol:my-2 prose-li:my-1">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    p: ({ children }) => <p className="mb-3 last:mb-0 leading-relaxed">{children}</p>,
+                    ul: ({ children }) => <ul className="list-disc list-inside mb-3 space-y-1">{children}</ul>,
+                    ol: ({ children }) => <ol className="list-decimal list-inside mb-3 space-y-1">{children}</ol>,
+                    li: ({ children }) => <li className="mb-1 leading-relaxed">{children}</li>,
+                    code: ({ children, className }) => {
+                      const isBlock = className?.includes("language-");
+                      if (isBlock) {
+                        return (
+                          <pre className="bg-muted/80 rounded-lg p-4 overflow-x-auto mb-4 border">
+                            <code className={className}>{children}</code>
+                          </pre>
+                        );
+                      }
                       return (
-                        <pre className="bg-muted rounded-md p-3 overflow-x-auto mb-2">
-                          <code className={className}>{children}</code>
-                        </pre>
+                        <code className="bg-muted/80 px-2 py-1 rounded text-sm font-mono">
+                          {children}
+                        </code>
                       );
-                    }
-                    return (
-                      <code className="bg-muted px-1.5 py-0.5 rounded text-sm">
+                    },
+                    h1: ({ children }) => <h1 className="text-lg font-bold mb-3 mt-4 first:mt-0 text-foreground">{children}</h1>,
+                    h2: ({ children }) => <h2 className="text-base font-semibold mb-2 mt-3 first:mt-0 text-foreground">{children}</h2>,
+                    h3: ({ children }) => <h3 className="text-sm font-semibold mb-2 mt-2 first:mt-0 text-foreground">{children}</h3>,
+                    blockquote: ({ children }) => (
+                      <blockquote className="border-l-4 border-primary pl-4 my-4 italic text-muted-foreground">
                         {children}
-                      </code>
-                    );
-                  },
-                  h1: ({ children }) => <h1 className="text-lg font-bold mb-2">{children}</h1>,
-                  h2: ({ children }) => <h2 className="text-base font-bold mb-2">{children}</h2>,
-                  h3: ({ children }) => <h3 className="text-sm font-bold mb-2">{children}</h3>,
-                }}
-              >
-                {message.content}
-              </ReactMarkdown>
+                      </blockquote>
+                    ),
+                    table: ({ children }) => (
+                      <div className="overflow-x-auto my-4">
+                        <table className="min-w-full border-collapse border border-border rounded-lg">
+                          {children}
+                        </table>
+                      </div>
+                    ),
+                    th: ({ children }) => (
+                      <th className="border border-border px-3 py-2 bg-muted font-semibold text-left">
+                        {children}
+                      </th>
+                    ),
+                    td: ({ children }) => (
+                      <td className="border border-border px-3 py-2">
+                        {children}
+                      </td>
+                    ),
+                  }}
+                >
+                  {message.content}
+                </ReactMarkdown>
+              </div>
+              
+              {message.sources && message.sources.length > 0 && (
+                <div className="border-t pt-4">
+                  <Citations sources={message.sources} />
+                </div>
+              )}
             </div>
           )}
         </CardContent>

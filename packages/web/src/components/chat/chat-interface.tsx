@@ -42,6 +42,7 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
         role: "assistant",
         content: response.answer,
         timestamp: new Date(),
+        sources: response.sources,
       };
 
       // Add assistant response
@@ -63,12 +64,18 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
   };
 
   return (
-    <Card className={cn("flex flex-col h-full", className)}>
+    <Card className={cn("flex flex-col h-full overflow-hidden", className)}>
+      <div className="p-4 border-b bg-muted/30">
+        <h2 className="text-lg font-semibold">Chat with ML Documentation Copilot</h2>
+        <p className="text-sm text-muted-foreground">
+          Ask questions about ML frameworks, deployment, and best practices
+        </p>
+      </div>
       <ChatMessages messages={messages} className="flex-1" />
       <ChatInput
         onSubmit={handleSendMessage}
         isLoading={chatApi.isPending}
-        className="border-0 border-t rounded-none"
+        className="border-0 border-t rounded-none bg-muted/20"
       />
     </Card>
   );

@@ -163,6 +163,7 @@ class HybridRetriever:
                 retrieval_results: List[RetrievalResult] = []
                 for idx, hit in enumerate(hits):
                     payload = hit.payload or {}
+                    # Get metadata from the nested structure
                     metadata = payload.get("metadata", {})
                     content = payload.get("text", "")
                     chunk_id = str(hit.id)

@@ -3,6 +3,7 @@ export interface Message {
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
+  sources?: Source[];
 }
 
 export interface Source {
@@ -12,6 +13,12 @@ export interface Source {
   heading_path: string;
   anchor_link: string;
   relevance_score: number;
+  vendor?: string;
+  doc_type?: string;
+  topics: string[];
+  quality_score?: number;
+  has_code_examples: boolean;
+  technical_depth?: string;
 }
 
 export interface ApiResponse {
