@@ -9,7 +9,18 @@ interface ChatRequest {
   include_sources?: boolean;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+// Use environment variable for API URL - no fallback for security
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
+if (!API_BASE_URL) {
+  throw new Error("NEXT_PUBLIC_API_URL environment variable is required");
+}
+
+// Debug logging (only in development)
+if (process.env.NODE_ENV === 'development') {
+  console.log("🔍 API_BASE_URL:", API_BASE_URL);
+  console.log("🔍 NEXT_PUBLIC_API_URL:", process.env.NEXT_PUBLIC_API_URL);
+}
 
 async function askQuestion(request: ChatRequest): Promise<ApiResponse> {
   const response = await fetch(`${API_BASE_URL}/ask`, {

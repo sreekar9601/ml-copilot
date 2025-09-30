@@ -1,8 +1,23 @@
+"use client";
+
+import { useState } from "react";
 import { ChatInterface } from "@/components/chat/chat-interface";
+import { LandingPageSimple } from "@/components/landing-page-simple";
+import { cn } from "@/lib/utils";
 
 export default function Home() {
+  const [showChat, setShowChat] = useState(false);
+
+  const handleStartChat = () => {
+    setShowChat(true);
+  };
+
+  const handleBackToLanding = () => {
+    setShowChat(false);
+  };
+
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-br from-background via-background to-muted/20">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-muted/30">
       {/* Header */}
       <header className="border-b bg-card/80 backdrop-blur-md supports-[backdrop-filter]:bg-card/80 shadow-sm">
         <div className="container mx-auto px-4 py-4">
@@ -34,28 +49,39 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Main Chat Interface */}
-      <main className="flex-1 container mx-auto px-4 py-6 max-w-5xl">
-        <div className="h-full">
-          <ChatInterface className="h-full shadow-lg rounded-xl border bg-card/50 backdrop-blur-sm" />
-        </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="border-t bg-card/80 backdrop-blur-md supports-[backdrop-filter]:bg-card/80">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
-            <p className="text-xs text-muted-foreground">
-              Built with Next.js, FastAPI, and Qdrant Cloud
-            </p>
-            <div className="flex items-center gap-4 text-xs text-muted-foreground">
-              <span>Enhanced with multi-source retrieval</span>
-              <span>•</span>
-              <span>Production-grade quality</span>
+      {/* Main Content */}
+      <main className="flex-1">
+        {showChat ? (
+          <div className="h-full container mx-auto px-4 py-6 max-w-5xl animate-in slide-in-from-bottom-4 fade-in duration-500">
+            <div className="h-full">
+              <ChatInterface 
+                className="h-full shadow-lg rounded-xl border bg-card/50 backdrop-blur-sm" 
+                onBackToLanding={handleBackToLanding}
+              />
             </div>
           </div>
-        </div>
-      </footer>
+        ) : (
+          <LandingPageSimple onStartChat={handleStartChat} />
+        )}
+      </main>
+
+      {/* Footer - Only show when not in chat */}
+      {!showChat && (
+        <footer className="border-t bg-card/80 backdrop-blur-md supports-[backdrop-filter]:bg-card/80">
+          <div className="container mx-auto px-4 py-3">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
+              <p className="text-xs text-muted-foreground">
+                Built with Next.js, FastAPI, and Qdrant Cloud
+              </p>
+              <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                <span>Enhanced with multi-source retrieval</span>
+                <span>•</span>
+                <span>Production-grade quality</span>
+              </div>
+            </div>
+          </div>
+        </footer>
+      )}
     </div>
   );
 }

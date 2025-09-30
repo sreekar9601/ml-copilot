@@ -62,114 +62,64 @@ export function Citations({ sources, className }: CitationsProps) {
   };
 
   return (
-    <div className={cn("space-y-3", className)}>
+    <div className={cn("space-y-2", className)}>
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold text-muted-foreground">
           Sources ({sources.length})
         </h3>
       </div>
       
-      <div className="space-y-2">
+      <div className="space-y-1">
         {sources.map((source, index) => (
-          <Card 
+          <div 
             key={source.chunk_id} 
-            className="hover:shadow-md transition-shadow cursor-pointer"
-            onClick={() => setExpandedSource(
-              expandedSource === source.chunk_id ? null : source.chunk_id
-            )}
+            className="flex items-center justify-between p-2 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors group"
           >
-            <CardHeader className="pb-2">
-              <div className="flex items-start justify-between">
-                <div className="flex-1 min-w-0">
-                  <CardTitle className="text-sm font-medium line-clamp-2">
-                    {source.title}
-                  </CardTitle>
-                  <div className="flex items-center gap-2 mt-1">
-                    {source.vendor && (
-                      <Badge 
-                        variant="secondary" 
-                        className={cn("text-xs", getVendorColor(source.vendor))}
-                      >
-                        {source.vendor}
-                      </Badge>
-                    )}
-                    {source.doc_type && (
-                      <Badge variant="outline" className="text-xs">
-                        {getDocTypeIcon(source.doc_type)}
-                        <span className="ml-1 capitalize">
-                          {source.doc_type.replace('_', ' ')}
-                        </span>
-                      </Badge>
-                    )}
-                    {source.has_code_examples && (
-                      <Badge variant="outline" className="text-xs">
-                        <Code className="h-3 w-3 mr-1" />
-                        Code
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 w-8 p-0"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    window.open(source.url, '_blank');
-                  }}
-                >
-                  <ExternalLink className="h-3 w-3" />
-                </Button>
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              <div className="flex-shrink-0">
+                {source.vendor && (
+                  <Badge 
+                    variant="secondary" 
+                    className={cn("text-xs px-2 py-1", getVendorColor(source.vendor))}
+                  >
+                    {source.vendor}
+                  </Badge>
+                )}
               </div>
-            </CardHeader>
-            
-            {expandedSource === source.chunk_id && (
-              <CardContent className="pt-0">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span>Relevance: {(source.relevance_score * 100).toFixed(0)}%</span>
-                    {getQualityStars(source.quality_score)}
-                  </div>
-                  
-                  {source.topics.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
-                      {source.topics.slice(0, 3).map((topic) => (
-                        <Badge key={topic} variant="outline" className="text-xs">
-                          {topic}
-                        </Badge>
-                      ))}
-                      {source.topics.length > 3 && (
-                        <Badge variant="outline" className="text-xs">
-                          +{source.topics.length - 3} more
-                        </Badge>
-                      )}
-                    </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="text-sm font-medium text-foreground truncate">
+                  {source.title}
+                </h4>
+                <div className="flex items-center gap-2 mt-1">
+                  {source.doc_type && (
+                    <span className="text-xs text-muted-foreground flex items-center gap-1">
+                      {getDocTypeIcon(source.doc_type)}
+                      {source.doc_type.replace('_', ' ')}
+                    </span>
                   )}
-                  
-                  {source.technical_depth && (
-                    <div className="text-xs text-muted-foreground">
-                      Level: <span className="capitalize">{source.technical_depth}</span>
-                    </div>
+                  {source.has_code_examples && (
+                    <span className="text-xs text-muted-foreground flex items-center gap-1">
+                      <Code className="h-3 w-3" />
+                      Code
+                    </span>
                   )}
-                  
-                  <div className="pt-2 border-t">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        window.open(source.url, '_blank');
-                      }}
-                    >
-                      <ExternalLink className="h-3 w-3 mr-2" />
-                      View Full Document
-                    </Button>
-                  </div>
+                  {source.quality_score && (
+                    <span className="text-xs text-muted-foreground">
+                      {(source.quality_score * 100).toFixed(0)}% quality
+                    </span>
+                  )}
                 </div>
-              </CardContent>
-            )}
-          </Card>
+              </div>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+              onClick={() => window.open(source.url, '_blank')}
+            >
+              <ExternalLink className="h-4 w-4" />
+            </Button>
+          </div>
         ))}
       </div>
     </div>

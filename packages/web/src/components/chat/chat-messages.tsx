@@ -89,9 +89,15 @@ export function ChatMessages({ messages, className }: ChatMessagesProps) {
 
   return (
     <ScrollArea className={cn("flex-1", className)} ref={scrollAreaRef}>
-      <div className="px-4 py-2">
-        {messages.map((message) => (
-          <ChatMessage key={message.id} message={message} />
+      <div className="px-4 py-2 space-y-2">
+        {messages.map((message, index) => (
+          <div
+            key={message.id}
+            className="animate-in slide-in-from-bottom-2 fade-in duration-300"
+            style={{ animationDelay: `${index * 100}ms` }}
+          >
+            <ChatMessage message={message} />
+          </div>
         ))}
         <div ref={bottomRef} />
       </div>

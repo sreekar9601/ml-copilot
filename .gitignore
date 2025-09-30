@@ -95,3 +95,4 @@ ingestion-service/
 # Deployment artifacts
 fly.toml
 .railway/
+DEPLOYMENT.md
