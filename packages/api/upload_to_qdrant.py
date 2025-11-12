@@ -2,12 +2,16 @@
 """Directly upload the correct data to Qdrant."""
 
 import os
+import sys
 import yaml
 from dotenv import load_dotenv
 from qdrant_client import QdrantClient
 from qdrant_client.http import models as qmodels
 import numpy as np
-from sentence_transformers import SentenceTransformer
+
+# Add path for ingest module
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'ingest'))
+from vertex_embedder import VertexAIEmbedder
 
 load_dotenv()
 
@@ -17,8 +21,8 @@ client = QdrantClient(
     api_key=os.getenv('QDRANT_API_KEY')
 )
 
-# Load embedding model
-model = SentenceTransformer('nomic-ai/nomic-embed-text-v1', trust_remote_code=True)
+# Use Vertex AI embedder to match query embeddings
+embedder = VertexAIEmbedder()
 
 # Sample ML documentation content
 ml_docs = [
@@ -73,8 +77,8 @@ print("✅ Created new collection")
 # Upload documents
 points = []
 for i, doc in enumerate(ml_docs):
-    # Generate embedding
-    embedding = model.encode(doc["text"]).tolist()
+    # Generate embedding using Vertex AI
+    embedding = embedder.encode_document(doc["text"]).tolist()
     
     # Create point
     point = qmodels.PointStruct(
@@ -106,7 +110,7 @@ print(f"✅ Collection now has {info.points_count} points")
 
 # Test search
 test_query = "How to deploy models with AWS SageMaker"
-test_embedding = model.encode(test_query).tolist()
+test_embedding = embedder.encode_query(test_query).tolist()
 results = client.search("ml-docs-copilot", query_vector=test_embedding, limit=3)
 
 print("\n🔍 Test search results:")

@@ -1,0 +1,100 @@
+{
+  "run_id": "run_20251102_123500",
+  "completed_at": "2025-11-02T12:53:07.824355",
+  "sources": [
+    {
+      "vendor": "PyTorch",
+      "pages": 0,
+      "chunks": 0,
+      "size_mb": 0,
+      "status": "failed",
+      "error": "No pages scraped"
+    },
+    {
+      "vendor": "PyTorch",
+      "pages": 0,
+      "chunks": 0,
+      "size_mb": 0,
+      "status": "failed",
+      "error": "No pages scraped"
+    },
+    {
+      "vendor": "PyTorch",
+      "pages": 0,
+      "chunks": 0,
+      "size_mb": 0,
+      "status": "failed",
+      "error": "No pages scraped"
+    },
+    {
+      "vendor": "TensorFlow",
+      "pages": 104,
+      "chunks": 454,
+      "size_mb": 100.48663902282715,
+      "status": "success",
+      "error": null
+    },
+    {
+      "vendor": "TensorFlow",
+      "pages": 0,
+      "chunks": 0,
+      "size_mb": 0,
+      "status": "failed",
+      "error": "No pages scraped"
+    },
+    {
+      "vendor": "Hugging Face",
+      "pages": 172,
+      "chunks": 250,
+      "size_mb": 38.26518535614014,
+      "status": "success",
+      "error": null
+    },
+    {
+      "vendor": "Hugging Face",
+      "pages": 65,
+      "chunks": 925,
+      "size_mb": 72.14012813568115,
+      "status": "success",
+      "error": null
+    },
+    {
+      "vendor": "Hugging Face",
+      "pages": 18,
+      "chunks": 25,
+      "size_mb": 74.33521556854248,
+      "status": "success",
+      "error": null
+    }
+  ],
+  "totals": {
+    "sources": 8,
+    "successful": 4,
+    "failed": 4,
+    "total_pages": 359,
+    "total_chunks": 1654,
+    "total_size_gb": 0.1707244673743844,
+    "utilization_percent": 4.877841924982412
+  },
+  "size_report": {
+    "total_size_mb": 174.82185459136963,
+    "total_size_gb": 0.1707244673743844,
+    "max_size_gb": 3.5,
+    "utilization_percent": 4.877841924982412,
+    "sources": {
+      "PyTorch": {
+        "size_mb": 0.0,
+        "size_bytes": 0
+      },
+      "TensorFlow": {
+        "size_mb": 100.48663902282715,
+        "size_bytes": 105367878
+      },
+      "Hugging Face": {
+        "size_mb": 74.33521556854248,
+        "size_bytes": 77946123
+      }
+    },
+    "total_pages": 359
+  }
+}

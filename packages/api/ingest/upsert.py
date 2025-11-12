@@ -12,7 +12,7 @@ from qdrant_client.http import models as qmodels
 import numpy as np
 
 from .chunker import DocumentChunk
-from .embedder import CachedEmbedder
+from .vertex_embedder import CachedVertexEmbedder
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +34,8 @@ class DatabaseManager:
         self.collection = None
         self.sqlite_conn = None
         
-        self.embedder = CachedEmbedder()
+        # Use Vertex AI embedder to match query embeddings
+        self.embedder = CachedVertexEmbedder()
     
     def initialize_chromadb(self) -> None:
         """Initialize ChromaDB client and collection."""

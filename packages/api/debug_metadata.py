@@ -2,10 +2,14 @@
 """Debug metadata extraction from Qdrant."""
 
 import os
+import sys
 from dotenv import load_dotenv
 from qdrant_client import QdrantClient
 import numpy as np
-from sentence_transformers import SentenceTransformer
+
+# Add path for ingest module
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'ingest'))
+from vertex_embedder import VertexAIEmbedder
 
 load_dotenv()
 
@@ -15,11 +19,12 @@ client = QdrantClient(
     api_key=os.getenv('QDRANT_API_KEY')
 )
 
-model = SentenceTransformer('nomic-ai/nomic-embed-text-v1', trust_remote_code=True)
+# Use Vertex AI embedder to match ingestion and query embeddings
+embedder = VertexAIEmbedder()
 
 # Test query
 query = "How to deploy models with AWS SageMaker"
-query_embedding = model.encode(query).tolist()
+query_embedding = embedder.encode_query(query).tolist()
 
 print(f"Query: {query}")
 print("=" * 50)

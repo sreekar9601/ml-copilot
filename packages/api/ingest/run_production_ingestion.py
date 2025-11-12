@@ -14,7 +14,7 @@ import yaml
 from production_scraper import ProductionScraper, ScrapedDocument
 from production_chunker import ProductionChunker, ProductionChunk
 from upsert import DatabaseManager
-from embedder import NomicEmbedder
+from vertex_embedder import VertexAIEmbedder
 
 # Setup logging
 logging.basicConfig(
@@ -34,7 +34,8 @@ class ProductionIngestionPipeline:
         # Initialize components
         self.scraper = None
         self.chunker = ProductionChunker(max_chunk_size=800, overlap=100)
-        self.embedder = NomicEmbedder()
+        # Use Vertex AI embedder to match query embeddings
+        self.embedder = VertexAIEmbedder()
         self.db_manager = DatabaseManager(data_dir, collection_name)
         
         # Quality metrics

@@ -1,0 +1,22 @@
+# PyTorch Documentation from GitHub (bypasses 403 errors)
+# Uses open-source repos instead of web scraping
+
+tier_pytorch_github:
+  - vendor: "PyTorch"
+    name: "PyTorch Tutorials"
+    source_type: "github"
+    repo_url: "https://github.com/pytorch/tutorials.git"
+    base_url: "https://pytorch.org/tutorials"
+    file_patterns: ["*.py", "*.rst", "*.md"]
+    max_pages: 250
+    
+  - vendor: "PyTorch"
+    name: "PyTorch Core Docs"
+    source_type: "github"
+    repo_url: "https://github.com/pytorch/pytorch.git"
+    base_url: "https://pytorch.org/docs/stable"
+    sparse_paths: ["docs/source/"]
+    file_patterns: ["*.rst", "*.md"]
+    max_pages: 300
+
+

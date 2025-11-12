@@ -6,7 +6,7 @@ import json
 from dotenv import load_dotenv
 from qdrant_client import QdrantClient
 from qdrant_client.http import models as qmodels
-from sentence_transformers import SentenceTransformer
+from vertex_embedder import VertexAIEmbedder
 from production_data_curator import ProductionDataCurator
 
 load_dotenv()
@@ -20,8 +20,8 @@ def main():
         api_key=os.getenv('QDRANT_API_KEY')
     )
     
-    # Load embedding model
-    model = SentenceTransformer('nomic-ai/nomic-embed-text-v1', trust_remote_code=True)
+    # Use Vertex AI embedder to match query embeddings
+    embedder = VertexAIEmbedder()
     
     # Get curated documents
     curator = ProductionDataCurator()
@@ -46,8 +46,8 @@ def main():
     # Upload documents
     points = []
     for i, doc in enumerate(documents):
-        # Generate embedding
-        embedding = model.encode(doc.content).tolist()
+        # Generate embedding using Vertex AI
+        embedding = embedder.encode_document(doc.content).tolist()
         
         # Create point
         point = qmodels.PointStruct(
@@ -97,7 +97,7 @@ def main():
     print("\n🔍 Testing comprehensive search results:")
     for query in test_queries:
         print(f"\n--- Query: {query} ---")
-        test_embedding = model.encode(query).tolist()
+        test_embedding = embedder.encode_query(query).tolist()
         results = client.search("ml-docs-copilot", query_vector=test_embedding, limit=2)
         
         for i, result in enumerate(results):

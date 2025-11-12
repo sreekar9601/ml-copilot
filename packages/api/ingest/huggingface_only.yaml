@@ -1,0 +1,46 @@
+---
+# Hugging Face only - works perfectly, most relevant for LLM finetuning
+
+tier_llm_finetuning:
+  huggingface_transformers:
+    name: "Hugging Face Transformers"
+    priority: "critical"
+    sources:
+      - url: "https://huggingface.co/docs/transformers/index"
+        type: "documentation"
+        max_depth: 3
+      - url: "https://huggingface.co/docs/transformers/training"
+        type: "guide"
+        max_depth: 2
+      - url: "https://huggingface.co/docs/transformers/main_classes/trainer"
+        type: "api"
+        max_depth: 2
+  
+  huggingface_peft:
+    name: "Hugging Face PEFT"
+    priority: "critical"
+    sources:
+      - url: "https://huggingface.co/docs/peft/index"
+        type: "documentation"
+        max_depth: 3
+      - url: "https://huggingface.co/docs/peft/quicktour"
+        type: "guide"
+        max_depth: 2
+  
+  huggingface_trl:
+    name: "Hugging Face TRL"
+    priority: "critical"
+    sources:
+      - url: "https://huggingface.co/docs/trl/index"
+        type: "documentation"
+        max_depth: 3
+  
+  huggingface_datasets:
+    name: "Hugging Face Datasets"
+    priority: "high"
+    sources:
+      - url: "https://huggingface.co/docs/datasets/index"
+        type: "documentation"
+        max_depth: 2
+
+

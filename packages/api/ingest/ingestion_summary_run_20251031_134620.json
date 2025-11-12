@@ -1,0 +1,72 @@
+{
+  "run_id": "run_20251031_134620",
+  "completed_at": "2025-10-31T13:46:20.567785",
+  "total_sources": 8,
+  "successful": 8,
+  "failed": 0,
+  "total_chunks": 40,
+  "by_tier": {
+    "tier_1_core_ml": {
+      "success": 8,
+      "failed": 0
+    }
+  },
+  "sources": [
+    {
+      "url": "https://pytorch.org/docs/stable/",
+      "vendor": "PyTorch",
+      "tier": "tier_1_core_ml",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://pytorch.org/tutorials/",
+      "vendor": "PyTorch",
+      "tier": "tier_1_core_ml",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://pytorch-lightning.readthedocs.io",
+      "vendor": "PyTorch",
+      "tier": "tier_1_core_ml",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://www.tensorflow.org/guide",
+      "vendor": "TensorFlow",
+      "tier": "tier_1_core_ml",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://keras.io/guides/",
+      "vendor": "TensorFlow",
+      "tier": "tier_1_core_ml",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://huggingface.co/docs/transformers",
+      "vendor": "Hugging Face",
+      "tier": "tier_1_core_ml",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://huggingface.co/docs/datasets",
+      "vendor": "Hugging Face",
+      "tier": "tier_1_core_ml",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://huggingface.co/docs/evaluate",
+      "vendor": "Hugging Face",
+      "tier": "tier_1_core_ml",
+      "status": "success",
+      "chunks": 5
+    }
+  ]
+}

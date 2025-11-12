@@ -1,2 +1,0 @@
-# ML Documentation Copilot package
-

@@ -10,10 +10,24 @@ from pydantic import BaseModel, Field
 
 from .multi_source_retrieval import get_multi_source_retriever, retrieve_multi_source_documents
 from .retrieval import get_retriever
-from ..ingest.document_tracker import DocumentTracker
-from ..ingest.enhanced_ingestion_pipeline import run_enhanced_ingestion
 
 logger = logging.getLogger(__name__)
+
+# Import document tracker and enhanced ingestion lazily to avoid import errors
+# These are only needed for specific endpoints
+DocumentTracker = None
+run_enhanced_ingestion = None
+
+try:
+    from ingest.document_tracker import DocumentTracker as _DocumentTracker
+    from ingest.enhanced_ingestion_pipeline import run_enhanced_ingestion as _run_enhanced_ingestion
+    DocumentTracker = _DocumentTracker
+    run_enhanced_ingestion = _run_enhanced_ingestion
+    logger.info("✅ Document tracker and enhanced ingestion available")
+except ImportError as e:
+    logger.warning(f"⚠️ Document tracker features not available: {e}")
+except Exception as e:
+    logger.warning(f"⚠️ Error loading document tracker: {e}")
 
 
 class MultiSourceQueryRequest(BaseModel):

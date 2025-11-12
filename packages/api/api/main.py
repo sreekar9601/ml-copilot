@@ -34,10 +34,15 @@ logger.info(f"SQLite database: {settings.sqlite_db}")
 # No need to configure here as it's already done
 
 # Debug logging for Google API configuration
-api_key_prefix = settings.google_api_key[:8] + "..." if settings.google_api_key else "NOT_SET"
-logger.info(f"🔑 Google API Key prefix: {api_key_prefix}")
+if settings.google_genai_use_vertexai.lower() == 'true':
+    logger.info(f"🌐 Mode: Vertex AI")
+    logger.info(f"📍 Project: {settings.google_cloud_project}")
+    logger.info(f"📍 Location: {settings.google_cloud_location}")
+else:
+    api_key_prefix = settings.google_api_key[:8] + "..." if settings.google_api_key else "NOT_SET"
+    logger.info(f"🔑 Google API Key prefix: {api_key_prefix}")
+    logger.info(f"🌐 Mode: Google AI Studio (free tier)")
 logger.info(f"🤖 Using Gemini model: gemini-1.5-flash")
-logger.info(f"🌐 Transport: REST (forced Studio API routing)")
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -107,6 +112,14 @@ async def rate_limit_middleware(request: Request, call_next):
 # Add startup event
 @app.on_event("startup")
 async def startup_event():
+    # Initialize Google client (triggers Vertex AI setup if configured)
+    from api import clients
+    try:
+        clients.get_client()
+        logger.info("✅ Google client initialized successfully")
+    except Exception as e:
+        logger.error(f"❌ Failed to initialize Google client: {e}")
+    
     logger.info("🚀 ML Documentation Copilot API is ready!")
     logger.info("📊 Available endpoints:")
     logger.info("  - GET  /health - Health check")
@@ -896,6 +909,17 @@ async def root():
             "Ray Serve (production serving, configuration)"
         ]
     }
+
+
+# Register enhanced endpoints (multi-source, advanced features)
+try:
+    from .enhanced_api_endpoints import add_enhanced_endpoints
+    add_enhanced_endpoints(app)
+    logger.info("✅ Enhanced endpoints registered: /ask-multi-source, /ask-advanced, /vendors, /stats-comprehensive")
+except ImportError as e:
+    logger.warning(f"⚠️ Enhanced endpoints not available: {e}")
+except Exception as e:
+    logger.error(f"❌ Error registering enhanced endpoints: {e}")
 
 
 if __name__ == "__main__":

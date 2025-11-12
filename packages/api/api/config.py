@@ -16,11 +16,12 @@ class Settings(BaseSettings):
     google_cloud_project: str = Field(default="", env="GOOGLE_CLOUD_PROJECT")
     google_cloud_location: str = Field(default="us-central1", env="GOOGLE_CLOUD_LOCATION")
     google_genai_use_vertexai: str = Field(default="False", env="GOOGLE_GENAI_USE_VERTEXAI")
+    google_application_credentials_json: str = Field(default="", env="GOOGLE_APPLICATION_CREDENTIALS_JSON")
     
     # Qdrant (managed vector DB)
     qdrant_url: str | None = Field(default=None, env="QDRANT_URL")
     qdrant_api_key: str | None = Field(default=None, env="QDRANT_API_KEY")
-    qdrant_collection_name: str = Field(default="ml-docs-copilot", env="QDRANT_COLLECTION")
+    qdrant_collection_name: str = Field(default="ml_docs", env="QDRANT_COLLECTION")
     
     # Data storage
     data_dir: Path = Field(default=Path("./data"), env="DATA_DIR")
@@ -40,7 +41,11 @@ class Settings(BaseSettings):
     rrf_k: int = Field(default=60, env="RRF_K")
     
     class Config:
-        env_file = ".env"
+        # Look for .env in multiple locations
+        env_file = [
+            Path(__file__).parent.parent / ".env",  # packages/api/.env
+            Path(__file__).parent.parent.parent.parent / ".env",  # root .env
+        ]
         env_file_encoding = "utf-8"
         extra = "ignore"  # Ignore extra environment variables
     

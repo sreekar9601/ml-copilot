@@ -1,0 +1,58 @@
+---
+# Focused re-ingestion for critical ML sources
+# Targets PyTorch (failed) and adds missing Hugging Face advanced docs
+
+tier_1_core_ml_focused:
+  pytorch:
+    name: "PyTorch"
+    priority: "critical"
+    sources:
+      - url: "https://pytorch.org/docs/stable/index.html"
+        type: "documentation"
+        max_depth: 2
+      - url: "https://pytorch.org/tutorials/beginner/basics/intro.html"
+        type: "tutorial"
+        max_depth: 2
+  
+  huggingface_core:
+    name: "Hugging Face Core"
+    priority: "critical"
+    sources:
+      - url: "https://huggingface.co/docs/transformers/index"
+        type: "documentation"
+        max_depth: 2
+      - url: "https://huggingface.co/docs/transformers/training"
+        type: "guide"
+        max_depth: 2
+  
+  huggingface_peft:
+    name: "Hugging Face PEFT"
+    priority: "critical"
+    sources:
+      - url: "https://huggingface.co/docs/peft/index"
+        type: "documentation"
+        max_depth: 2
+      - url: "https://huggingface.co/blog/peft"
+        type: "guide"
+        max_depth: 1
+  
+  huggingface_trl:
+    name: "Hugging Face TRL"
+    priority: "critical"
+    sources:
+      - url: "https://huggingface.co/docs/trl/index"
+        type: "documentation"
+        max_depth: 2
+  
+  quantization:
+    name: "Quantization"
+    priority: "high"
+    sources:
+      - url: "https://huggingface.co/blog/4bit-transformers-bitsandbytes"
+        type: "guide"
+        max_depth: 1
+      - url: "https://pytorch.org/docs/stable/quantization.html"
+        type: "guide"
+        max_depth: 1
+
+

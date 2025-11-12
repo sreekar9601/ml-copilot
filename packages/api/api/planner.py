@@ -5,12 +5,38 @@ import logging
 from typing import List, Dict, Any, Optional, Tuple
 from pydantic import BaseModel, Field
 import numpy as np
-from sklearn.metrics.pairwise import cosine_similarity
 
 from .clients import get_client, GENERATION_MODEL_NAME
 from .retrieval import RetrievalResult, get_retriever
 
 logger = logging.getLogger(__name__)
+
+
+def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
+    """
+    Compute cosine similarity between two vectors using numpy.
+    Lightweight alternative to sklearn.metrics.pairwise.cosine_similarity
+    """
+    if a.ndim == 1:
+        a = a.reshape(1, -1)
+    if b.ndim == 1:
+        b = b.reshape(1, -1)
+    
+    # Compute dot product
+    dot_product = np.dot(a, b.T)
+    
+    # Compute norms
+    norm_a = np.linalg.norm(a, axis=1, keepdims=True)
+    norm_b = np.linalg.norm(b, axis=1, keepdims=True)
+    
+    # Avoid division by zero
+    norm_a = np.where(norm_a == 0, 1, norm_a)
+    norm_b = np.where(norm_b == 0, 1, norm_b)
+    
+    # Compute cosine similarity
+    similarity = dot_product / (norm_a * norm_b.T)
+    
+    return similarity
 
 
 class Step(BaseModel):

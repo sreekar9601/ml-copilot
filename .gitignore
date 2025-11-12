@@ -4,6 +4,9 @@ node_modules
 .env.local
 .env.production
 
+# Google Cloud credentials
+**/gcp-credentials.json
+
 # Python
 __pycache__/
 *.py[cod]

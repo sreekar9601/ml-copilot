@@ -5,6 +5,8 @@
 
 # Google Cloud credentials
 credentials.json
+gcp-credentials.json
+ingest/gcp-credentials.json
 
 # Python
 __pycache__/

@@ -2,10 +2,14 @@
 """Upload comprehensive ML documentation with detailed content."""
 
 import os
+import sys
 from dotenv import load_dotenv
 from qdrant_client import QdrantClient
 from qdrant_client.http import models as qmodels
-from sentence_transformers import SentenceTransformer
+
+# Add path for ingest module
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'ingest'))
+from vertex_embedder import VertexAIEmbedder
 
 load_dotenv()
 
@@ -15,8 +19,8 @@ client = QdrantClient(
     api_key=os.getenv('QDRANT_API_KEY')
 )
 
-# Load embedding model
-model = SentenceTransformer('nomic-ai/nomic-embed-text-v1', trust_remote_code=True)
+# Use Vertex AI embedder to match query embeddings
+embedder = VertexAIEmbedder()
 
 # Comprehensive ML documentation content
 comprehensive_docs = [
@@ -499,8 +503,8 @@ print("✅ Created new collection")
 # Upload documents
 points = []
 for i, doc in enumerate(comprehensive_docs):
-    # Generate embedding
-    embedding = model.encode(doc["text"]).tolist()
+    # Generate embedding using Vertex AI
+    embedding = embedder.encode_document(doc["text"]).tolist()
     
     # Create point
     point = qmodels.PointStruct(
@@ -542,7 +546,7 @@ test_queries = [
 print("\n🔍 Testing comprehensive search results:")
 for query in test_queries:
     print(f"\n--- Query: {query} ---")
-    test_embedding = model.encode(query).tolist()
+    test_embedding = embedder.encode_query(query).tolist()
     results = client.search("ml-docs-copilot", query_vector=test_embedding, limit=2)
     
     for i, result in enumerate(results):

@@ -1,0 +1,212 @@
+{
+  "run_id": "run_20251031_144313",
+  "completed_at": "2025-10-31T14:59:25.113815",
+  "sources": [
+    {
+      "vendor": "PyTorch",
+      "pages": 0,
+      "chunks": 0,
+      "size_mb": 0,
+      "status": "failed",
+      "error": "No pages scraped"
+    },
+    {
+      "vendor": "PyTorch",
+      "pages": 0,
+      "chunks": 0,
+      "size_mb": 0,
+      "status": "failed",
+      "error": "No pages scraped"
+    },
+    {
+      "vendor": "PyTorch",
+      "pages": 0,
+      "chunks": 0,
+      "size_mb": 0,
+      "status": "failed",
+      "error": "No pages scraped"
+    },
+    {
+      "vendor": "TensorFlow",
+      "pages": 111,
+      "chunks": 480,
+      "size_mb": 101.77267837524414,
+      "status": "success",
+      "error": null
+    },
+    {
+      "vendor": "TensorFlow",
+      "pages": 0,
+      "chunks": 0,
+      "size_mb": 0,
+      "status": "failed",
+      "error": "No pages scraped"
+    },
+    {
+      "vendor": "Hugging Face",
+      "pages": 148,
+      "chunks": 306,
+      "size_mb": 34.46291160583496,
+      "status": "success",
+      "error": null
+    },
+    {
+      "vendor": "Hugging Face",
+      "pages": 0,
+      "chunks": 0,
+      "size_mb": 0,
+      "status": "failed",
+      "error": "No pages scraped"
+    },
+    {
+      "vendor": "Hugging Face",
+      "pages": 0,
+      "chunks": 0,
+      "size_mb": 0,
+      "status": "failed",
+      "error": "No pages scraped"
+    },
+    {
+      "vendor": "Data Handling",
+      "pages": 23,
+      "chunks": 31,
+      "size_mb": 0.7786731719970703,
+      "status": "success",
+      "error": null
+    },
+    {
+      "vendor": "Data Handling",
+      "pages": 0,
+      "chunks": 0,
+      "size_mb": 0,
+      "status": "failed",
+      "error": "No pages scraped"
+    },
+    {
+      "vendor": "Data Handling",
+      "pages": 1,
+      "chunks": 1,
+      "size_mb": 0.8252992630004883,
+      "status": "success",
+      "error": null
+    },
+    {
+      "vendor": "Data Versioning",
+      "pages": 119,
+      "chunks": 806,
+      "size_mb": 39.852004051208496,
+      "status": "success",
+      "error": null
+    },
+    {
+      "vendor": "Data Versioning",
+      "pages": 24,
+      "chunks": 36,
+      "size_mb": 41.23233699798584,
+      "status": "success",
+      "error": null
+    },
+    {
+      "vendor": "Data Versioning",
+      "pages": 0,
+      "chunks": 0,
+      "size_mb": 0,
+      "status": "failed",
+      "error": "8281403761118086319"
+    },
+    {
+      "vendor": "Data Versioning",
+      "pages": 63,
+      "chunks": 658,
+      "size_mb": 100.4174394607544,
+      "status": "success",
+      "error": null
+    },
+    {
+      "vendor": "Experiment Tracking",
+      "pages": 144,
+      "chunks": 283,
+      "size_mb": 78.81186485290527,
+      "status": "success",
+      "error": null
+    },
+    {
+      "vendor": "Experiment Tracking",
+      "pages": 38,
+      "chunks": 109,
+      "size_mb": 82.20219326019287,
+      "status": "success",
+      "error": null
+    },
+    {
+      "vendor": "Experiment Tracking",
+      "pages": 0,
+      "chunks": 0,
+      "size_mb": 0,
+      "status": "failed",
+      "error": "-2291151189136906578"
+    },
+    {
+      "vendor": "Model Registry",
+      "pages": 1,
+      "chunks": 1,
+      "size_mb": 0.39916229248046875,
+      "status": "success",
+      "error": null
+    },
+    {
+      "vendor": "Model Registry",
+      "pages": 0,
+      "chunks": 0,
+      "size_mb": 0,
+      "status": "failed",
+      "error": "No pages scraped"
+    }
+  ],
+  "totals": {
+    "sources": 20,
+    "successful": 10,
+    "failed": 10,
+    "total_pages": 672,
+    "total_chunks": 2711,
+    "total_size_gb": 0.3154519535601139,
+    "utilization_percent": 9.012912958860397
+  },
+  "size_report": {
+    "total_size_mb": 323.02280044555664,
+    "total_size_gb": 0.3154519535601139,
+    "max_size_gb": 3.5,
+    "utilization_percent": 9.012912958860397,
+    "sources": {
+      "PyTorch": {
+        "size_mb": 0.0,
+        "size_bytes": 0
+      },
+      "TensorFlow": {
+        "size_mb": 101.77267837524414,
+        "size_bytes": 106716388
+      },
+      "Hugging Face": {
+        "size_mb": 34.46291160583496,
+        "size_bytes": 36136982
+      },
+      "Data Handling": {
+        "size_mb": 0.8252992630004883,
+        "size_bytes": 865389
+      },
+      "Data Versioning": {
+        "size_mb": 100.4174394607544,
+        "size_bytes": 105295317
+      },
+      "Experiment Tracking": {
+        "size_mb": 85.14530944824219,
+        "size_bytes": 89281328
+      },
+      "Model Registry": {
+        "size_mb": 0.39916229248046875,
+        "size_bytes": 418552
+      }
+    },
+    "total_pages": 943
+  }
+}

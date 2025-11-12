@@ -139,10 +139,10 @@ class HybridRetriever:
                 self.embedder = LightweightEmbedder("text-embedding-004")
                 logger.info("Using lightweight Google Cloud Vertex AI embedder")
             except ImportError:
-                # Fallback to heavy embedder (for ingestion service)
-                from ingest.embedder import CachedEmbedder
-                self.embedder = CachedEmbedder(settings.embedding_model)
-                logger.info("Using heavy local embedder")
+                # Fallback to Vertex AI embedder (matches ingestion embeddings)
+                from ingest.vertex_embedder import CachedVertexEmbedder
+                self.embedder = CachedVertexEmbedder()
+                logger.info("Using Vertex AI embedder (fallback)")
         return self.embedder
     
     def vector_search(self, query: str, top_k: int = 10) -> List[RetrievalResult]:

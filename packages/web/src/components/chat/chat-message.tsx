@@ -8,6 +8,8 @@ import { Bot, User, Copy, Check } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Citations } from "./citations";
+import { TutorialMessage } from "./tutorial-message";
+import { QueryModeBadge } from "./query-mode-badge";
 import { cn } from "@/lib/utils";
 import { processMarkdownContent } from "@/lib/markdown-utils";
 import { useState } from "react";
@@ -71,8 +73,23 @@ export function ChatMessage({ message, className }: ChatMessageProps) {
               <p className="text-sm leading-relaxed break-words">{message.content}</p>
             </div>
           ) : (
-            <div className="space-y-4 w-full">
-              <div className="prose prose-base max-w-none dark:prose-invert prose-headings:font-semibold prose-h1:text-lg prose-h2:text-base prose-h3:text-sm prose-p:leading-relaxed prose-ul:my-2 prose-ol:my-2 prose-li:my-1 prose-strong:text-foreground prose-strong:font-semibold break-words overflow-wrap-anywhere hyphens-auto w-full">
+            <div className="space-y-4 w-full max-w-full overflow-hidden">
+              {/* Query Mode Badge */}
+              {message.queryMode && message.queryAnalysis && (
+                <div className="pb-2 border-b">
+                  <QueryModeBadge 
+                    mode={message.queryMode}
+                    detectedVendors={message.queryAnalysis.detectedVendors}
+                    reasoning={message.queryAnalysis.reasoning}
+                  />
+                </div>
+              )}
+
+              {/* Tutorial Mode - Special Rendering */}
+              {message.tutorial ? (
+                <TutorialMessage tutorial={message.tutorial} />
+              ) : (
+                <div className="prose prose-base max-w-none dark:prose-invert prose-headings:font-semibold prose-h1:text-lg prose-h2:text-base prose-h3:text-sm prose-p:leading-relaxed prose-ul:my-2 prose-ol:my-2 prose-li:my-1 prose-strong:text-foreground prose-strong:font-semibold break-words overflow-wrap-anywhere hyphens-auto w-full">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={{
@@ -205,13 +222,14 @@ export function ChatMessage({ message, className }: ChatMessageProps) {
                   {processMarkdownContent(message.content)}
                 </ReactMarkdown>
               </div>
+              )}
               
-                  {/* Show citations from RAG metadata (not from LLM-generated text) */}
-                  {message.sources && message.sources.length > 0 && (
-                    <div className="border-t pt-4">
-                      <Citations sources={message.sources} />
-                    </div>
-                  )}
+              {/* Show citations from RAG metadata (not from LLM-generated text) */}
+              {!message.tutorial && message.sources && message.sources.length > 0 && (
+                <div className="border-t pt-4">
+                  <Citations sources={message.sources} />
+                </div>
+              )}
             </div>
           )}
         </CardContent>

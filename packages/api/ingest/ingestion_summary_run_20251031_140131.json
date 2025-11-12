@@ -1,0 +1,359 @@
+{
+  "run_id": "run_20251031_140131",
+  "completed_at": "2025-10-31T14:01:32.372882",
+  "total_sources": 45,
+  "successful": 45,
+  "failed": 0,
+  "total_chunks": 225,
+  "by_tier": {
+    "tier_1_core_ml": {
+      "success": 8,
+      "failed": 0
+    },
+    "tier_2_data_engineering": {
+      "success": 7,
+      "failed": 0
+    },
+    "tier_3_mlops": {
+      "success": 7,
+      "failed": 0
+    },
+    "tier_4_serving": {
+      "success": 5,
+      "failed": 0
+    },
+    "tier_5_containers": {
+      "success": 3,
+      "failed": 0
+    },
+    "tier_6_cloud": {
+      "success": 6,
+      "failed": 0
+    },
+    "tier_7_optimization": {
+      "success": 4,
+      "failed": 0
+    },
+    "tier_8_monitoring": {
+      "success": 5,
+      "failed": 0
+    }
+  },
+  "sources": [
+    {
+      "url": "https://pytorch.org/docs/stable/",
+      "vendor": "PyTorch",
+      "tier": "tier_1_core_ml",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://pytorch.org/tutorials/",
+      "vendor": "PyTorch",
+      "tier": "tier_1_core_ml",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://pytorch-lightning.readthedocs.io",
+      "vendor": "PyTorch",
+      "tier": "tier_1_core_ml",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://www.tensorflow.org/guide",
+      "vendor": "TensorFlow",
+      "tier": "tier_1_core_ml",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://keras.io/guides/",
+      "vendor": "TensorFlow",
+      "tier": "tier_1_core_ml",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://huggingface.co/docs/transformers",
+      "vendor": "Hugging Face",
+      "tier": "tier_1_core_ml",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://huggingface.co/docs/datasets",
+      "vendor": "Hugging Face",
+      "tier": "tier_1_core_ml",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://huggingface.co/docs/evaluate",
+      "vendor": "Hugging Face",
+      "tier": "tier_1_core_ml",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://pandas.pydata.org/docs/",
+      "vendor": "Data Handling",
+      "tier": "tier_2_data_engineering",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://docs.dask.org/",
+      "vendor": "Data Handling",
+      "tier": "tier_2_data_engineering",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://pola-rs.github.io/polars-book/user-guide/",
+      "vendor": "Data Handling",
+      "tier": "tier_2_data_engineering",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://dvc.org/doc",
+      "vendor": "Data Versioning",
+      "tier": "tier_2_data_engineering",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://docs.dagster.io/",
+      "vendor": "Data Versioning",
+      "tier": "tier_2_data_engineering",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://airflow.apache.org/docs/",
+      "vendor": "Data Versioning",
+      "tier": "tier_2_data_engineering",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://docs.prefect.io/",
+      "vendor": "Data Versioning",
+      "tier": "tier_2_data_engineering",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://docs.wandb.ai/",
+      "vendor": "Experiment Tracking",
+      "tier": "tier_3_mlops",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://mlflow.org/docs/latest/",
+      "vendor": "Experiment Tracking",
+      "tier": "tier_3_mlops",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://docs.neptune.ai/",
+      "vendor": "Experiment Tracking",
+      "tier": "tier_3_mlops",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://docs.wandb.ai/guides/models",
+      "vendor": "Model Registry",
+      "tier": "tier_3_mlops",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://mlflow.org/docs/latest/model-registry.html",
+      "vendor": "Model Registry",
+      "tier": "tier_3_mlops",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://docs.seldon.io/",
+      "vendor": "Deployment Pipelines",
+      "tier": "tier_3_mlops",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://kserve.github.io/website/",
+      "vendor": "Deployment Pipelines",
+      "tier": "tier_3_mlops",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://docs.bentoml.org/en/latest/",
+      "vendor": "Model Serving",
+      "tier": "tier_4_serving",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://docs.ray.io/en/latest/serve/",
+      "vendor": "Model Serving",
+      "tier": "tier_4_serving",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://fastapi.tiangolo.com/",
+      "vendor": "Model Serving",
+      "tier": "tier_4_serving",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://github.com/triton-inference-server/server/blob/main/docs/README.md",
+      "vendor": "Model Serving",
+      "tier": "tier_4_serving",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://pytorch.org/serve/",
+      "vendor": "Model Serving",
+      "tier": "tier_4_serving",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://docs.docker.com/",
+      "vendor": "Containerization",
+      "tier": "tier_5_containers",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://kubernetes.io/docs/",
+      "vendor": "Containerization",
+      "tier": "tier_5_containers",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://www.kubeflow.org/docs/",
+      "vendor": "Containerization",
+      "tier": "tier_5_containers",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://docs.aws.amazon.com/sagemaker/",
+      "vendor": "AWS",
+      "tier": "tier_6_cloud",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://docs.aws.amazon.com/eks/",
+      "vendor": "AWS",
+      "tier": "tier_6_cloud",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://docs.aws.amazon.com/s3/",
+      "vendor": "AWS",
+      "tier": "tier_6_cloud",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://cloud.google.com/vertex-ai/docs",
+      "vendor": "GCP",
+      "tier": "tier_6_cloud",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://cloud.google.com/kubernetes-engine/docs",
+      "vendor": "GCP",
+      "tier": "tier_6_cloud",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/azure/machine-learning/",
+      "vendor": "Azure",
+      "tier": "tier_6_cloud",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://onnx.ai/onnx/",
+      "vendor": "Model Optimization",
+      "tier": "tier_7_optimization",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://pytorch.org/docs/stable/quantization.html",
+      "vendor": "Model Optimization",
+      "tier": "tier_7_optimization",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://docs.nvidia.com/deeplearning/tensorrt/",
+      "vendor": "Model Optimization",
+      "tier": "tier_7_optimization",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://docs.nvidia.com/cuda/",
+      "vendor": "Hardware Acceleration",
+      "tier": "tier_7_optimization",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://docs.evidentlyai.com/",
+      "vendor": "Monitoring & Observability",
+      "tier": "tier_8_monitoring",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://prometheus.io/docs/",
+      "vendor": "Monitoring & Observability",
+      "tier": "tier_8_monitoring",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://grafana.com/docs/",
+      "vendor": "Monitoring & Observability",
+      "tier": "tier_8_monitoring",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://docs.python.org/3/library/logging.html",
+      "vendor": "Logging",
+      "tier": "tier_8_monitoring",
+      "status": "success",
+      "chunks": 5
+    },
+    {
+      "url": "https://loguru.readthedocs.io/",
+      "vendor": "Logging",
+      "tier": "tier_8_monitoring",
+      "status": "success",
+      "chunks": 5
+    }
+  ]
+}

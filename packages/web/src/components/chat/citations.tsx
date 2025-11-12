@@ -51,11 +51,11 @@ export function Citations({ sources, className }: CitationsProps) {
     .slice(0, 3);
 
   return (
-    <div className={cn("space-y-2", className)}>
+    <div className={cn("space-y-2 w-full max-w-full overflow-hidden", className)}>
       <h3 className="text-sm font-semibold text-muted-foreground">
         Sources ({topSources.length} most relevant)
       </h3>
-      <div className="space-y-1">
+      <div className="space-y-1 w-full">
         {topSources.map((source, index) => {
           // Create a more specific reference URL
           let referenceUrl = source.url;
@@ -86,7 +86,7 @@ export function Citations({ sources, className }: CitationsProps) {
             <div 
               key={source.chunk_id} 
               className={cn(
-                "flex items-center gap-3 p-2 rounded-lg transition-colors group cursor-pointer",
+                "flex items-center gap-3 p-2 rounded-lg transition-colors group cursor-pointer w-full overflow-hidden",
                 isHighlyRelevant 
                   ? "bg-primary/10 hover:bg-primary/20 border border-primary/30" 
                   : "bg-muted/20 hover:bg-muted/40"
@@ -101,7 +101,7 @@ export function Citations({ sources, className }: CitationsProps) {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className={cn(
-                    "text-sm hover:text-primary transition-colors font-medium",
+                    "text-sm hover:text-primary transition-colors font-medium break-words",
                     isHighlyRelevant ? "text-foreground" : "text-foreground/80"
                   )}>
                     {source.title}
@@ -128,12 +128,12 @@ export function Citations({ sources, className }: CitationsProps) {
                 </div>
                 {source.heading_path && (
                   <div className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                    <span>📍</span>
-                    <span>{source.heading_path}</span>
+                    <span className="flex-shrink-0">📍</span>
+                    <span className="break-words">{source.heading_path}</span>
                   </div>
                 )}
                 {source.topics && source.topics.length > 0 && (
-                  <div className="text-xs text-muted-foreground mt-1">
+                  <div className="text-xs text-muted-foreground mt-1 break-words">
                     Topics: {source.topics.slice(0, 3).join(', ')}
                     {source.topics.length > 3 && ` +${source.topics.length - 3} more`}
                   </div>

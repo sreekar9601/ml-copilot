@@ -26,8 +26,8 @@ def get_client():
     """Get or create the shared client instance."""
     global _client
     if _client is None:
-        # Check if we should use Vertex AI
-        use_vertexai = os.getenv('GOOGLE_GENAI_USE_VERTEXAI', 'False').lower() == 'true'
+        # Check if we should use Vertex AI (use settings, not os.getenv)
+        use_vertexai = settings.google_genai_use_vertexai.lower() == 'true'
         
         if use_vertexai:
             # Use Vertex AI configuration from settings
@@ -39,11 +39,17 @@ def get_client():
             if not project:
                 raise ValueError("GOOGLE_CLOUD_PROJECT environment variable is required")
             
-            # Set up credentials from environment variable
-            credentials_json = os.getenv('GOOGLE_APPLICATION_CREDENTIALS_JSON')
+            # Set up credentials from settings (always use settings for consistency)
+            credentials_json = settings.google_application_credentials_json
+            
             if credentials_json:
                 # Parse the JSON credentials
-                credentials = json.loads(credentials_json)
+                try:
+                    credentials = json.loads(credentials_json)
+                except json.JSONDecodeError as e:
+                    logger.error(f"JSON decode error: {e}")
+                    logger.error(f"Problematic JSON around position {e.pos}: {credentials_json[max(0,e.pos-20):e.pos+20]}")
+                    raise
                 # Set the GOOGLE_APPLICATION_CREDENTIALS environment variable
                 credentials_file = os.path.join(os.getcwd(), 'gcp-credentials.json')
                 with open(credentials_file, 'w') as f:

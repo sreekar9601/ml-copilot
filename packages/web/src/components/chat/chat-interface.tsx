@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Message } from "@/types/chat";
+import { Message, TutorialResponse, ApiResponse, MultiSourceResponse } from "@/types/chat";
 import { ChatMessages } from "./chat-messages";
 import { ChatInput } from "./chat-input";
 import { useChatApi } from "@/hooks/use-chat-api";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, GraduationCap } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getActiveFeatures } from "@/lib/query-analyzer";
 
 interface ChatInterfaceProps {
   className?: string;
@@ -17,6 +19,7 @@ interface ChatInterfaceProps {
 
 export function ChatInterface({ className, onBackToLanding }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>([]);
+  const [tutorialMode, setTutorialMode] = useState(false);
   const chatApi = useChatApi();
 
   const handleSendMessage = async (content: string) => {
@@ -32,20 +35,45 @@ export function ChatInterface({ className, onBackToLanding }: ChatInterfaceProps
     setMessages(prev => [...prev, userMessage]);
 
     try {
-      // Call API
+      // Call smart API with tutorial mode flag
       const response = await chatApi.mutateAsync({
         q: content,
-        top_k: 5,
-        include_sources: true,
+        tutorialMode,
       });
 
-      // Create assistant message
+      const { data, queryAnalysis } = response;
+
+      // Determine content based on response type
+      let messageContent = "";
+      let tutorial: TutorialResponse | undefined;
+      let sources: any[] = [];
+
+      if ('tutorial' in data) {
+        // Tutorial response
+        const tutorialData = data as TutorialResponse;
+        tutorial = tutorialData;
+        messageContent = `# ${tutorialData.tutorial.title}\n\nTutorial with ${tutorialData.tutorial.steps.length} steps generated successfully.`;
+      } else {
+        // Standard or multi-source response
+        const apiData = data as ApiResponse | MultiSourceResponse;
+        messageContent = apiData.answer;
+        sources = apiData.sources;
+      }
+
+      // Create assistant message with enhanced metadata
       const assistantMessage: Message = {
         id: `assistant-${Date.now()}`,
         role: "assistant",
-        content: response.answer,
+        content: messageContent,
         timestamp: new Date(),
-        sources: response.sources,
+        sources: sources,
+        tutorial: tutorial,
+        queryMode: queryAnalysis.mode,
+        queryAnalysis: {
+          reasoning: queryAnalysis.reasoning,
+          detectedVendors: queryAnalysis.detectedVendors,
+          activeFeatures: getActiveFeatures(queryAnalysis.mode),
+        },
       };
 
       // Add assistant response
@@ -68,7 +96,7 @@ export function ChatInterface({ className, onBackToLanding }: ChatInterfaceProps
 
   return (
     <Card className={cn("flex flex-col h-full", className)}>
-      <div className="p-4 border-b bg-muted/30">
+      <div className="p-4 border-b bg-muted/30 space-y-3">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold">Chat with ML Documentation Copilot</h2>
@@ -86,6 +114,33 @@ export function ChatInterface({ className, onBackToLanding }: ChatInterfaceProps
               <ArrowLeft className="h-4 w-4" />
               Back to Home
             </Button>
+          )}
+        </div>
+
+        {/* Tutorial Mode Toggle */}
+        <div className="flex items-center gap-3 pt-2 border-t">
+          <Button
+            variant={tutorialMode ? "default" : "outline"}
+            size="sm"
+            onClick={() => setTutorialMode(!tutorialMode)}
+            className="flex items-center gap-2"
+          >
+            <GraduationCap className="h-4 w-4" />
+            Tutorial Mode
+          </Button>
+          
+          {tutorialMode ? (
+            <div className="flex-1">
+              <p className="text-xs text-muted-foreground">
+                📖 Queries will generate step-by-step tutorials with commands and code examples
+              </p>
+            </div>
+          ) : (
+            <div className="flex-1">
+              <p className="text-xs text-muted-foreground">
+                🎯 Smart routing: Multi-vendor detection, query expansion, and adaptive search
+              </p>
+            </div>
           )}
         </div>
       </div>

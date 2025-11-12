@@ -1,0 +1,233 @@
+---
+# Comprehensive ML Engineering Documentation Sources
+# Organized by tier for systematic ingestion
+
+tier_1_core_ml:
+  pytorch:
+    name: "PyTorch"
+    priority: "high"
+    sources:
+      - url: "https://pytorch.org/docs/stable/"
+        type: "api_reference"
+        max_depth: 3
+      - url: "https://pytorch.org/tutorials/"
+        type: "tutorials"
+        max_depth: 2
+      - url: "https://pytorch-lightning.readthedocs.io"
+        type: "framework"
+        max_depth: 2
+  
+  tensorflow:
+    name: "TensorFlow"
+    priority: "high"
+    sources:
+      - url: "https://www.tensorflow.org/guide"
+        type: "guide"
+        max_depth: 2
+      - url: "https://keras.io/guides/"
+        type: "guide"
+        max_depth: 2
+  
+  huggingface:
+    name: "Hugging Face"
+    priority: "high"
+    sources:
+      - url: "https://huggingface.co/docs/transformers"
+        type: "api_reference"
+        max_depth: 2
+      - url: "https://huggingface.co/docs/datasets"
+        type: "api_reference"
+        max_depth: 2
+      - url: "https://huggingface.co/docs/evaluate"
+        type: "api_reference"
+        max_depth: 2
+
+tier_2_data_engineering:
+  data_handling:
+    name: "Data Handling"
+    priority: "medium"
+    sources:
+      - url: "https://pandas.pydata.org/docs/"
+        type: "api_reference"
+        max_depth: 2
+      - url: "https://docs.dask.org/"
+        type: "guide"
+        max_depth: 2
+      - url: "https://pola-rs.github.io/polars-book/user-guide/"
+        type: "guide"
+        max_depth: 2
+  
+  data_versioning:
+    name: "Data Versioning"
+    priority: "medium"
+    sources:
+      - url: "https://dvc.org/doc"
+        type: "guide"
+        max_depth: 2
+      - url: "https://docs.dagster.io/"
+        type: "guide"
+        max_depth: 2
+      - url: "https://airflow.apache.org/docs/"
+        type: "guide"
+        max_depth: 2
+      - url: "https://docs.prefect.io/"
+        type: "guide"
+        max_depth: 2
+
+tier_3_mlops:
+  tracking:
+    name: "Experiment Tracking"
+    priority: "high"
+    sources:
+      - url: "https://docs.wandb.ai/"
+        type: "guide"
+        max_depth: 2
+      - url: "https://mlflow.org/docs/latest/"
+        type: "guide"
+        max_depth: 2
+      - url: "https://docs.neptune.ai/"
+        type: "guide"
+        max_depth: 2
+  
+  model_registry:
+    name: "Model Registry"
+    priority: "high"
+    sources:
+      - url: "https://docs.wandb.ai/guides/models"
+        type: "guide"
+        max_depth: 2
+      - url: "https://mlflow.org/docs/latest/model-registry.html"
+        type: "guide"
+        max_depth: 2
+  
+  deployment_pipelines:
+    name: "Deployment Pipelines"
+    priority: "high"
+    sources:
+      - url: "https://docs.seldon.io/"
+        type: "guide"
+        max_depth: 2
+      - url: "https://kserve.github.io/website/"
+        type: "guide"
+        max_depth: 2
+
+tier_4_serving:
+  serving_frameworks:
+    name: "Model Serving"
+    priority: "high"
+    sources:
+      - url: "https://docs.bentoml.org/en/latest/"
+        type: "guide"
+        max_depth: 2
+      - url: "https://docs.ray.io/en/latest/serve/"
+        type: "guide"
+        max_depth: 2
+      - url: "https://fastapi.tiangolo.com/"
+        type: "api_reference"
+        max_depth: 2
+      - url: "https://github.com/triton-inference-server/server/blob/main/docs/README.md"
+        type: "guide"
+        max_depth: 1
+      - url: "https://pytorch.org/serve/"
+        type: "guide"
+        max_depth: 2
+
+tier_5_containers:
+  containerization:
+    name: "Containerization"
+    priority: "high"
+    sources:
+      - url: "https://docs.docker.com/"
+        type: "guide"
+        max_depth: 2
+      - url: "https://kubernetes.io/docs/"
+        type: "guide"
+        max_depth: 2
+      - url: "https://www.kubeflow.org/docs/"
+        type: "guide"
+        max_depth: 2
+
+tier_6_cloud:
+  aws:
+    name: "AWS"
+    priority: "high"
+    sources:
+      - url: "https://docs.aws.amazon.com/sagemaker/"
+        type: "guide"
+        max_depth: 2
+      - url: "https://docs.aws.amazon.com/eks/"
+        type: "guide"
+        max_depth: 1
+      - url: "https://docs.aws.amazon.com/s3/"
+        type: "guide"
+        max_depth: 1
+  
+  gcp:
+    name: "GCP"
+    priority: "high"
+    sources:
+      - url: "https://cloud.google.com/vertex-ai/docs"
+        type: "guide"
+        max_depth: 2
+      - url: "https://cloud.google.com/kubernetes-engine/docs"
+        type: "guide"
+        max_depth: 1
+  
+  azure:
+    name: "Azure"
+    priority: "medium"
+    sources:
+      - url: "https://learn.microsoft.com/en-us/azure/machine-learning/"
+        type: "guide"
+        max_depth: 2
+
+tier_7_optimization:
+  model_optimization:
+    name: "Model Optimization"
+    priority: "medium"
+    sources:
+      - url: "https://onnx.ai/onnx/"
+        type: "guide"
+        max_depth: 1
+      - url: "https://pytorch.org/docs/stable/quantization.html"
+        type: "guide"
+        max_depth: 1
+      - url: "https://docs.nvidia.com/deeplearning/tensorrt/"
+        type: "guide"
+        max_depth: 2
+  
+  hardware:
+    name: "Hardware Acceleration"
+    priority: "medium"
+    sources:
+      - url: "https://docs.nvidia.com/cuda/"
+        type: "guide"
+        max_depth: 1
+
+tier_8_monitoring:
+  monitoring:
+    name: "Monitoring & Observability"
+    priority: "medium"
+    sources:
+      - url: "https://docs.evidentlyai.com/"
+        type: "guide"
+        max_depth: 2
+      - url: "https://prometheus.io/docs/"
+        type: "guide"
+        max_depth: 2
+      - url: "https://grafana.com/docs/"
+        type: "guide"
+        max_depth: 1
+  
+  logging:
+    name: "Logging"
+    priority: "low"
+    sources:
+      - url: "https://docs.python.org/3/library/logging.html"
+        type: "api_reference"
+        max_depth: 1
+      - url: "https://loguru.readthedocs.io/"
+        type: "guide"
+        max_depth: 1
+
+
