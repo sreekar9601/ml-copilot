@@ -42,7 +42,7 @@ else:
     api_key_prefix = settings.google_api_key[:8] + "..." if settings.google_api_key else "NOT_SET"
     logger.info(f"🔑 Google API Key prefix: {api_key_prefix}")
     logger.info(f"🌐 Mode: Google AI Studio (free tier)")
-logger.info(f"🤖 Using Gemini model: gemini-1.5-flash")
+logger.info(f"🤖 Using Gemini model: gemini-2.5-flash")
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -69,6 +69,17 @@ else:
         "https://localhost:3000",
         "https://127.0.0.1:3000"
     ]
+
+# Include agent endpoints (v3.0)
+try:
+    from .agent_endpoints import router as agent_router
+    app.include_router(agent_router)
+    logger.info("✅ Agent endpoints (v3.0) loaded successfully")
+except Exception as e:
+    import traceback
+    logger.warning(f"⚠️ Failed to load agent endpoints: {e}")
+    logger.warning(f"Full traceback:\n{traceback.format_exc()}")
+    logger.warning("Agent v3.0 features will not be available")
 
 app.add_middleware(
     CORSMiddleware,

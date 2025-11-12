@@ -163,9 +163,19 @@ class HybridRetriever:
                 retrieval_results: List[RetrievalResult] = []
                 for idx, hit in enumerate(hits):
                     payload = hit.payload or {}
-                    # Get metadata from the nested structure
+                    # Get metadata - try both nested and flat structures
                     metadata = payload.get("metadata", {})
-                    content = payload.get("text", "")
+                    
+                    # If metadata is empty, payload itself might contain the metadata fields
+                    if not metadata:
+                        metadata = {
+                            'source_url': payload.get('source_url', ''),
+                            'vendor': payload.get('vendor', ''),
+                            'heading_path': payload.get('heading_path', ''),
+                            'title': payload.get('title', '')
+                        }
+                    
+                    content = payload.get("text", payload.get("content", ""))
                     chunk_id = str(hit.id)
                     retrieval_results.append(
                         RetrievalResult(
@@ -223,16 +233,25 @@ class HybridRetriever:
             # Prepare FTS5 query - escape special characters and add wildcards
             fts_query = self._prepare_fts_query(query)
             
-            # Search with ranking (bm25 available only in ORDER BY/select). Avoid window functions.
+            # First, check what columns exist in the FTS table
+            cursor.execute("PRAGMA table_info(documents_fts)")
+            columns_info = cursor.fetchall()
+            available_columns = {col['name'] for col in columns_info}
+            
+            # Build SELECT clause based on available columns
+            select_columns = ['chunk_id', 'content']
+            optional_columns = ['title', 'heading_path', 'source_url', 'anchor_link']
+            for col in optional_columns:
+                if col in available_columns:
+                    select_columns.append(col)
+            
+            select_clause = ', '.join(select_columns)
+            
+            # Search with ranking
             cursor.execute(
-                """
+                f"""
                 SELECT 
-                    chunk_id,
-                    content,
-                    title,
-                    heading_path,
-                    source_url,
-                    anchor_link,
+                    {select_clause},
                     bm25(documents_fts) AS score
                 FROM documents_fts
                 WHERE documents_fts MATCH ?
@@ -247,12 +266,20 @@ class HybridRetriever:
             # Convert to RetrievalResult objects
             retrieval_results = []
             for idx, row in enumerate(results):
-                metadata = {
-                    'title': row['title'],
-                    'heading_path': row['heading_path'],
-                    'source_url': row['source_url'],
-                    'anchor_link': row['anchor_link']
-                }
+                # Build metadata from available columns
+                metadata = {}
+                for col in optional_columns:
+                    if col in available_columns:
+                        metadata[col] = row[col]
+                
+                # Get vendor from metadata if we have source_url
+                if 'source_url' in metadata:
+                    source_url = metadata['source_url']
+                    # Extract vendor from URL
+                    for vendor in ['pytorch', 'tensorflow', 'sklearn', 'mlflow', 'ray', 'wandb']:
+                        if vendor in source_url.lower():
+                            metadata['vendor'] = vendor
+                            break
                 
                 # BM25 scores are negative (lower is better), convert to positive similarity
                 score = abs(row['score']) if row['score'] else 0
@@ -266,11 +293,66 @@ class HybridRetriever:
                 ))
             
             logger.debug(f"Keyword search returned {len(retrieval_results)} results")
+            
+            # If SQLite results don't have source_url, enrich from Qdrant
+            if retrieval_results and not retrieval_results[0].metadata.get('source_url'):
+                retrieval_results = self._enrich_metadata_from_qdrant(retrieval_results)
+            
             return retrieval_results
             
         except Exception as e:
             logger.error(f"Error in keyword search: {e}")
             return []
+    
+    def _enrich_metadata_from_qdrant(self, results: List[RetrievalResult]) -> List[RetrievalResult]:
+        """Enrich results with metadata from Qdrant when SQLite doesn't have it."""
+        if not self.qdrant_client:
+            return results
+        
+        try:
+            # Batch fetch points from Qdrant
+            # Convert chunk_ids back to integers (they were stored as ints in Qdrant)
+            chunk_ids = []
+            for r in results:
+                try:
+                    # Try to convert to int (if it's a string representation of an int)
+                    chunk_ids.append(int(r.chunk_id))
+                except (ValueError, TypeError):
+                    # If it's already an int or a UUID string, use as-is
+                    chunk_ids.append(r.chunk_id)
+            
+            points = self.qdrant_client.retrieve(
+                collection_name=settings.qdrant_collection_name,
+                ids=chunk_ids,
+                with_payload=True,
+                with_vectors=False
+            )
+            
+            # Create a mapping of chunk_id to metadata (convert to string for matching)
+            metadata_map = {
+                str(point.id): point.payload
+                for point in points
+            }
+            
+            # Enrich results
+            enriched_results = []
+            for result in results:
+                chunk_id_str = str(result.chunk_id)
+                if chunk_id_str in metadata_map:
+                    payload = metadata_map[chunk_id_str]
+                    # Update metadata with Qdrant payload
+                    result.metadata.update({
+                        'source_url': payload.get('source_url', ''),
+                        'vendor': payload.get('vendor', 'unknown'),
+                        'heading_path': payload.get('heading_path', ''),
+                        'title': payload.get('title', '')
+                    })
+                enriched_results.append(result)
+            
+            return enriched_results
+        except Exception as e:
+            logger.warning(f"Failed to enrich metadata from Qdrant: {e}")
+            return results
     
     def _prepare_fts_query(self, query: str) -> str:
         """Prepare query for FTS5 search."""

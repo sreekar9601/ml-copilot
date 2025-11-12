@@ -38,24 +38,22 @@ export function ChatInput({
   };
 
   return (
-    <Card className={cn("border-t rounded-t-none", className)}>
-      <CardContent className="p-4">
-        <div className="flex gap-3 items-end">
-          <div className="flex-1">
-            <Textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={placeholder}
-              className="min-h-[60px] max-h-[200px] resize-none border-0 focus-visible:ring-0 shadow-none"
-              disabled={isLoading}
-            />
-          </div>
+    <div className={cn("w-full border-t bg-background", className)}>
+      <div className="max-w-4xl mx-auto px-6 py-4">
+        <div className="relative">
+          <Textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={placeholder}
+            className="min-h-[56px] max-h-[200px] resize-none pr-12 border-2 focus-visible:ring-1 focus-visible:ring-primary rounded-2xl text-[15px] leading-relaxed py-4"
+            disabled={isLoading}
+          />
           <Button
             onClick={handleSubmit}
             disabled={!input.trim() || isLoading}
             size="sm"
-            className="h-10 w-10 shrink-0"
+            className="absolute bottom-3 right-3 h-9 w-9 shrink-0 rounded-xl"
           >
             {isLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -64,10 +62,7 @@ export function ChatInput({
             )}
           </Button>
         </div>
-        <div className="text-xs text-muted-foreground mt-2">
-          Press Enter to send, Shift+Enter for new line
-        </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

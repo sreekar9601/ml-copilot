@@ -2,11 +2,15 @@
 
 import { useState } from "react";
 import { ChatInterface } from "@/components/chat/chat-interface";
+import { ChatInterfaceV3 } from "@/components/chat/chat-interface-v3";
 import { LandingPageEnhanced } from "@/components/landing-page-enhanced";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { Badge } from "@/components/ui/badge";
+import { Sparkles } from "lucide-react";
 
 export default function Home() {
   const [showChat, setShowChat] = useState(false);
+  const [useAgentV3, setUseAgentV3] = useState(true); // Default to v3
 
   const handleStartChat = () => {
     setShowChat(true);
@@ -16,6 +20,25 @@ export default function Home() {
     setShowChat(false);
   };
 
+  // Full screen chat mode - no header/footer
+  if (showChat) {
+    return (
+      <div className="h-screen w-screen flex flex-col overflow-hidden bg-background">
+        {useAgentV3 ? (
+          <ChatInterfaceV3
+            onBackToLanding={handleBackToLanding}
+          />
+        ) : (
+          <ChatInterface 
+            className="h-full" 
+            onBackToLanding={handleBackToLanding}
+          />
+        )}
+      </div>
+    );
+  }
+
+  // Landing page with header/footer
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-muted/30">
       {/* Header */}
@@ -52,37 +75,24 @@ export default function Home() {
 
       {/* Main Content */}
       <main className="flex-1">
-        {showChat ? (
-          <div className="h-full container mx-auto px-4 py-6 max-w-7xl animate-in slide-in-from-bottom-4 fade-in duration-500">
-            <div className="h-full">
-              <ChatInterface 
-                className="h-full shadow-lg rounded-xl border bg-card/50 backdrop-blur-sm" 
-                onBackToLanding={handleBackToLanding}
-              />
-            </div>
-          </div>
-        ) : (
-          <LandingPageEnhanced onStartChat={handleStartChat} />
-        )}
+        <LandingPageEnhanced onStartChat={handleStartChat} />
       </main>
 
-      {/* Footer - Only show when not in chat */}
-      {!showChat && (
-        <footer className="border-t bg-card/80 backdrop-blur-md supports-[backdrop-filter]:bg-card/80">
-          <div className="container mx-auto px-4 py-3">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
-              <p className="text-xs text-muted-foreground">
-                Built with Next.js, FastAPI, and Qdrant Cloud
-              </p>
-              <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                <span>Enhanced with multi-source retrieval</span>
-                <span>•</span>
-                <span>Production-grade quality</span>
-              </div>
+      {/* Footer */}
+      <footer className="border-t bg-card/80 backdrop-blur-md supports-[backdrop-filter]:bg-card/80">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
+            <p className="text-xs text-muted-foreground">
+              Built with Next.js, FastAPI, and Qdrant Cloud
+            </p>
+            <div className="flex items-center gap-4 text-xs text-muted-foreground">
+              <span>Enhanced with multi-source retrieval</span>
+              <span>•</span>
+              <span>Production-grade quality</span>
             </div>
           </div>
-        </footer>
-      )}
+        </div>
+      </footer>
     </div>
   );
 }

@@ -1,0 +1,307 @@
+# Clean ML Documentation Sources
+# Uses GitHub repos where available (faster, no rate limiting)
+# Uses web scraping for documentation-only sites
+
+sources:
+  # ====================
+  # TIER 1: Core ML Frameworks (GitHub-based)
+  # ====================
+  
+  pytorch:
+    vendor: "PyTorch"
+    priority: "critical"
+    type: "github"
+    sources:
+      - name: "PyTorch Tutorials"
+        repo_url: "https://github.com/pytorch/tutorials.git"
+        base_url: "https://pytorch.org/tutorials"
+        file_patterns: ["*.py", "*.rst", "*.md"]
+        paths: ["."]
+        max_files: 300
+        
+      - name: "PyTorch Core Docs"
+        repo_url: "https://github.com/pytorch/pytorch.git"
+        base_url: "https://pytorch.org/docs/stable"
+        sparse_paths: ["docs/source/"]
+        file_patterns: ["*.rst", "*.md"]
+        max_files: 400
+  
+  tensorflow:
+    vendor: "TensorFlow"
+    priority: "critical"
+    type: "github"
+    sources:
+      - name: "TensorFlow Docs"
+        repo_url: "https://github.com/tensorflow/docs.git"
+        base_url: "https://www.tensorflow.org"
+        file_patterns: ["*.md", "*.ipynb"]
+        paths: ["site/en/"]
+        max_files: 500
+  
+  huggingface:
+    vendor: "Hugging Face"
+    priority: "critical"
+    type: "github"
+    sources:
+      - name: "Transformers Docs"
+        repo_url: "https://github.com/huggingface/transformers.git"
+        base_url: "https://huggingface.co/docs/transformers"
+        sparse_paths: ["docs/source/en/"]
+        file_patterns: ["*.md", "*.mdx"]
+        max_files: 400
+        
+      - name: "Datasets Docs"
+        repo_url: "https://github.com/huggingface/datasets.git"
+        base_url: "https://huggingface.co/docs/datasets"
+        sparse_paths: ["docs/source/"]
+        file_patterns: ["*.md", "*.mdx"]
+        max_files: 200
+  
+  # ====================
+  # TIER 2: MLOps & Tracking (GitHub-based)
+  # ====================
+  
+  mlflow:
+    vendor: "MLflow"
+    priority: "critical"
+    type: "github"
+    sources:
+      - name: "MLflow Docs"
+        repo_url: "https://github.com/mlflow/mlflow.git"
+        base_url: "https://mlflow.org/docs/latest"
+        sparse_paths: ["docs/source/"]
+        file_patterns: ["*.rst", "*.md"]
+        max_files: 300
+  
+  dvc:
+    vendor: "DVC"
+    priority: "high"
+    type: "github"
+    sources:
+      - name: "DVC Documentation"
+        repo_url: "https://github.com/iterative/dvc.org.git"
+        base_url: "https://dvc.org"
+        file_patterns: ["*.md"]
+        paths: ["content/docs/"]
+        max_files: 200
+  
+  wandb:
+    vendor: "Weights & Biases"
+    priority: "high"
+    type: "github"
+    sources:
+      - name: "W&B Docs"
+        repo_url: "https://github.com/wandb/docodile.git"
+        base_url: "https://docs.wandb.ai"
+        file_patterns: ["*.md"]
+        paths: ["."]
+        max_files: 250
+        fallback_web: "https://docs.wandb.ai/"  # Use web if GitHub fails
+  
+  # ====================
+  # TIER 3: Model Serving (Mixed)
+  # ====================
+  
+  ray:
+    vendor: "Ray"
+    priority: "high"
+    type: "github"
+    sources:
+      - name: "Ray Serve Docs"
+        repo_url: "https://github.com/ray-project/ray.git"
+        base_url: "https://docs.ray.io/en/latest/serve"
+        sparse_paths: ["doc/source/serve/"]
+        file_patterns: ["*.rst", "*.md"]
+        max_files: 150
+  
+  bentoml:
+    vendor: "BentoML"
+    priority: "high"
+    type: "github"
+    sources:
+      - name: "BentoML Docs"
+        repo_url: "https://github.com/bentoml/BentoML.git"
+        base_url: "https://docs.bentoml.org"
+        sparse_paths: ["docs/source/"]
+        file_patterns: ["*.rst", "*.md"]
+        max_files: 150
+  
+  fastapi:
+    vendor: "FastAPI"
+    priority: "high"
+    type: "github"
+    sources:
+      - name: "FastAPI Docs"
+        repo_url: "https://github.com/tiangolo/fastapi.git"
+        base_url: "https://fastapi.tiangolo.com"
+        sparse_paths: ["docs/en/docs/"]
+        file_patterns: ["*.md"]
+        max_files: 200
+  
+  # ====================
+  # TIER 4: Cloud Platforms (Web-based - no GitHub alternative)
+  # ====================
+  
+  aws_sagemaker:
+    vendor: "AWS SageMaker"
+    priority: "high"
+    type: "web"
+    sources:
+      - url: "https://docs.aws.amazon.com/sagemaker/latest/dg/whatis.html"
+        max_depth: 2
+        max_pages: 150
+        topics: ["sagemaker", "aws", "ml-training", "deployment"]
+  
+  gcp_vertex:
+    vendor: "GCP Vertex AI"
+    priority: "high"
+    type: "web"
+    sources:
+      - url: "https://cloud.google.com/vertex-ai/docs/start/introduction-unified-platform"
+        max_depth: 2
+        max_pages: 150
+        topics: ["vertex-ai", "gcp", "ml-platform"]
+  
+  azure_ml:
+    vendor: "Azure ML"
+    priority: "medium"
+    type: "web"
+    sources:
+      - url: "https://learn.microsoft.com/en-us/azure/machine-learning/overview-what-is-azure-machine-learning"
+        max_depth: 2
+        max_pages: 100
+        topics: ["azure", "ml-platform"]
+  
+  # ====================
+  # TIER 5: Containers & Orchestration (GitHub-based)
+  # ====================
+  
+  kubernetes:
+    vendor: "Kubernetes"
+    priority: "high"
+    type: "github"
+    sources:
+      - name: "Kubernetes Docs"
+        repo_url: "https://github.com/kubernetes/website.git"
+        base_url: "https://kubernetes.io/docs"
+        sparse_paths: ["content/en/docs/"]
+        file_patterns: ["*.md"]
+        max_files: 300
+  
+  kubeflow:
+    vendor: "Kubeflow"
+    priority: "high"
+    type: "github"
+    sources:
+      - name: "Kubeflow Docs"
+        repo_url: "https://github.com/kubeflow/website.git"
+        base_url: "https://www.kubeflow.org/docs"
+        file_patterns: ["*.md"]
+        paths: ["content/en/docs/"]
+        max_files: 200
+  
+  kserve:
+    vendor: "KServe"
+    priority: "high"
+    type: "github"
+    sources:
+      - name: "KServe Docs"
+        repo_url: "https://github.com/kserve/website.git"
+        base_url: "https://kserve.github.io/website"
+        file_patterns: ["*.md"]
+        paths: ["docs/"]
+        max_files: 100
+  
+  # ====================
+  # TIER 6: Data Engineering (GitHub-based)
+  # ====================
+  
+  pandas:
+    vendor: "Pandas"
+    priority: "medium"
+    type: "github"
+    sources:
+      - name: "Pandas Docs"
+        repo_url: "https://github.com/pandas-dev/pandas.git"
+        base_url: "https://pandas.pydata.org/docs"
+        sparse_paths: ["doc/source/"]
+        file_patterns: ["*.rst"]
+        max_files: 200
+  
+  dask:
+    vendor: "Dask"
+    priority: "medium"
+    type: "github"
+    sources:
+      - name: "Dask Docs"
+        repo_url: "https://github.com/dask/dask.git"
+        base_url: "https://docs.dask.org"
+        sparse_paths: ["docs/source/"]
+        file_patterns: ["*.rst", "*.md"]
+        max_files: 150
+  
+  # ====================
+  # TIER 7: Monitoring (Mixed)
+  # ====================
+  
+  prometheus:
+    vendor: "Prometheus"
+    priority: "medium"
+    type: "github"
+    sources:
+      - name: "Prometheus Docs"
+        repo_url: "https://github.com/prometheus/docs.git"
+        base_url: "https://prometheus.io/docs"
+        file_patterns: ["*.md"]
+        paths: ["content/docs/"]
+        max_files: 100
+  
+  grafana:
+    vendor: "Grafana"
+    priority: "medium"
+    type: "web"
+    sources:
+      - url: "https://grafana.com/docs/grafana/latest/"
+        max_depth: 2
+        max_pages: 100
+        topics: ["grafana", "monitoring", "visualization"]
+
+
+# Ingestion Configuration
+config:
+  # GitHub settings
+  github:
+    shallow_clone: true  # Use --depth=1 for faster clones
+    cleanup_after: true  # Remove clones after ingestion
+    rate_limit: 0.5  # seconds between operations
+  
+  # Web scraping settings
+  web:
+    user_agent: "ML-Docs-Copilot/2.0 (Educational)"
+    rate_limit: 2  # seconds between requests
+    timeout: 30
+    retry_attempts: 3
+    respect_robots_txt: true
+  
+  # Chunking settings
+  chunking:
+    method: "semantic"
+    max_chunk_size: 1000
+    min_chunk_size: 200
+    overlap: 100
+  
+  # Quality filters
+  quality:
+    min_content_length: 150
+    max_content_length: 50000
+    skip_patterns:
+      - "changelog"
+      - "release-notes"
+      - "contributing"
+      - "code-of-conduct"
+    required_metadata:
+      - "vendor"
+      - "source_url"
+      - "title"
+
+
