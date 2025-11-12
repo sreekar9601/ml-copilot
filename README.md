@@ -1,219 +1,201 @@
 # ML Documentation Copilot
 
-An AI-powered assistant for ML infrastructure documentation using advanced RAG techniques. Built with a modern monorepo architecture featuring Next.js frontend and FastAPI backend.
+> AI-powered assistant for navigating ML framework documentation using advanced RAG and agentic orchestration.
+
+**Query across PyTorch, TensorFlow, Scikit-learn, MLflow, Ray, and W&B docs in natural language.**
+
+---
+
+## 🎯 What It Does
+
+- **Smart Q&A**: Ask questions, get accurate answers with citations
+- **Tutorial Generation**: Get step-by-step guides for any ML task
+- **Cross-Framework Comparison**: Compare approaches across libraries
+- **Agentic Tools** (v3.0): Web search, code execution, adaptive reasoning
+
+---
 
 ## 🏗️ Architecture
-
-### Monorepo Structure
 
 ```
 ml-docs-copilot/
 ├── packages/
-│   ├── api/          # FastAPI backend
-│   │   ├── api/      # API routes and logic
-│   │   └── ingest/   # Data ingestion pipeline
-│   └── web/          # Next.js frontend
-│       └── src/
-│           ├── app/        # Next.js app directory
-│           ├── components/ # React components
-│           ├── hooks/      # Custom React hooks
-│           └── types/      # TypeScript types
-├── package.json          # Root workspace configuration
-└── pnpm-workspace.yaml   # Monorepo workspace config
+│   ├── api/        # FastAPI backend (Python 3.11+)
+│   │   ├── api/    # RAG pipeline & endpoints
+│   │   ├── agent/  # LangGraph orchestration (v3.0)
+│   │   └── ingest/ # Data ingestion pipeline
+│   └── web/        # Next.js 15 frontend (React 19)
+└── pnpm-workspace.yaml
 ```
 
-## 🚀 Technology Stack
+**Tech Stack**: Next.js 15 • FastAPI • Google Gemini 2.5 Flash • Qdrant • LangGraph • Tailwind CSS v4
 
-### Frontend
-- **Framework**: Next.js 15 with App Router
-- **Styling**: Tailwind CSS v4
-- **UI Components**: Radix UI (headless components)
-- **State Management**: TanStack Query v5
-- **Markdown**: react-markdown with remark-gfm
-- **Icons**: Lucide React
-- **Language**: TypeScript 5+
+---
 
-### Backend
-- **Framework**: FastAPI (Python 3.11+)
-- **LLM**: Google Gemini 2.5 Flash (Vertex AI)
-- **Embeddings**: Vertex AI text-embedding-004 (768-dim)
-- **Vector DB**: Qdrant Cloud (prod) / ChromaDB (dev)
-- **Keyword Search**: SQLite FTS5 with BM25
-- **Advanced Features**: Query expansion, MMR diversification, cross-encoder reranking
+## ⚡ Quick Start
 
-## ✨ Features
+### 1. Prerequisites
 
-### Intelligent Query Routing
-- **Smart Query Analyzer**: Client-side analysis to determine optimal backend endpoint
-- **Tutorial Mode**: Structured step-by-step learning paths
-- **Multi-Source Mode**: Cross-framework comparisons
-- **Advanced Mode**: Full RAG pipeline with all optimizations
-- **Standard Mode**: Fast basic queries
+- Node.js 18+, pnpm 8+
+- Python 3.11+
+- Google Cloud Platform account (Vertex AI enabled)
 
-### Advanced RAG Pipeline
-- **Hybrid Search**: Vector similarity + keyword search with RRF fusion
-- **Query Expansion**: Multi-step breakdown for complex queries
-- **Intent Classification**: Automatic query type detection
-- **Vendor Detection**: Identifies ML frameworks mentioned
-- **MMR Diversification**: Reduces result redundancy
-- **Cross-Encoder Reranking**: Optimal relevance scoring
-- **Context Expansion**: Fetches neighboring chunks for richer context
-
-### Modern UI/UX
-- **Interactive Tutorials**: Collapsible steps with navigation
-- **Code Blocks**: Syntax highlighting with one-click copy
-- **Visual Callouts**: Tips, warnings, info boxes
-- **Citation Management**: Three-level citation system
-- **Responsive Design**: Mobile-first, adaptive layout
-- **Dark/Light Mode**: Theme support with smooth transitions
-
-### Documentation Coverage
-- PyTorch
-- TensorFlow
-- Scikit-learn
-- MLflow
-- Ray
-- Weights & Biases
-
-## 🚀 Quick Start
-
-### Prerequisites
-- **Node.js** 18+ and **pnpm**
-- **Python** 3.11+
-- **Google Cloud Platform** account with Vertex AI enabled
-- **Qdrant Cloud** account (optional, for production)
-
-### 1. Installation
+### 2. Install Dependencies
 
 ```bash
-# Clone repository
-git clone <repository-url>
-cd ml-docs-copilot
-
-# Install frontend dependencies
+# Root: Install frontend
 pnpm install
-```
 
-### 2. Backend Setup
-
-```bash
-# Navigate to backend
+# Backend: Create venv and install
 cd packages/api
-
-# Create virtual environment
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
-
-# Install dependencies
 pip install -r requirements-api.txt
-
-# Setup environment variables
-cp env.example .env
-# Edit .env with your credentials:
-# - GOOGLE_PROJECT_ID
-# - GOOGLE_LOCATION
-# - GOOGLE_APPLICATION_CREDENTIALS (path to service account JSON)
-# - QDRANT_URL and QDRANT_API_KEY (if using Qdrant Cloud)
 ```
 
-### 3. Data Ingestion (First Time)
+### 3. Configure Environment
 
 ```bash
-# Run ingestion pipeline (takes 30-60 minutes)
 cd packages/api
-python -m ingest.main
-
-# This will:
-# - Crawl documentation from sources in ingest/seeds.yaml
-# - Generate embeddings
-# - Store in vector database and SQLite
+cp env.example .env
 ```
 
-### 4. Start Development Servers
+**Edit `.env` with:**
+```bash
+# Required
+GOOGLE_PROJECT_ID=your-gcp-project
+GOOGLE_LOCATION=us-central1
+GOOGLE_APPLICATION_CREDENTIALS=/path/to/gcp-credentials.json
+
+# Optional (graceful fallback if missing)
+QDRANT_URL=https://your-cluster.qdrant.io
+QDRANT_API_KEY=your-api-key
+TAVILY_API_KEY=your-tavily-key      # Web search
+E2B_API_KEY=your-e2b-key            # Code execution
+```
+
+### 4. Ingest Documentation (First Time)
 
 ```bash
-# Terminal 1: Start backend (from packages/api)
-uvicorn api.main:app --reload --host 0.0.0.0 --port 8000
+# From packages/api (takes 30-60 min)
+python -m ingest.main
+```
 
-# Terminal 2: Start frontend (from packages/web)
+### 5. Start Development Servers
+
+```bash
+# Terminal 1: Backend (from packages/api)
+uvicorn api.main:app --reload --port 8000
+
+# Terminal 2: Frontend (from packages/web)
 pnpm dev
 ```
 
-### 5. Access Application
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:8000
-- **API Docs**: http://localhost:8000/docs
+**Access**: http://localhost:3000
+
+---
+
+## 🚀 Features
+
+### Intelligent Query Modes
+
+| Mode | Best For | Latency |
+|------|----------|---------|
+| **Standard** | Quick factual queries | 1-2s |
+| **Advanced** | Complex questions with query expansion | 2-4s |
+| **Tutorial** | Step-by-step how-to guides | 4-8s |
+| **Multi-Source** | Cross-framework comparisons | 3-5s |
+| **Agent** (v3.0) | Tool-using, reasoning tasks | 2-12s |
+
+### Advanced RAG Pipeline
+
+- **Hybrid Search**: Vector similarity + BM25 keyword search with RRF fusion
+- **Query Expansion**: Multi-step breakdown for complex queries
+- **MMR Diversification**: Reduces result redundancy
+- **Cross-Encoder Reranking**: Optimal relevance scoring
+- **Context Expansion**: Fetches neighboring chunks
+
+### Agentic System (v3.0 - Beta)
+
+Powered by LangGraph with:
+- **Tools**: Documentation search, web search (Tavily), code execution (E2B)
+- **Memory**: SQLite-backed conversation history with cost tracking
+- **Budget Enforcement**: Per-session limits (~$0.50 default)
+- **Checkpointing**: Persistent state across sessions
+
+---
 
 ## 📡 API Endpoints
 
-### Main Endpoints
-- `POST /ask` - Standard Q&A (fast, basic RAG)
-- `POST /ask-advanced` - Enhanced RAG with query expansion
-- `POST /ask-multi-source` - Cross-framework queries
-- `POST /howto` - Tutorial generation
-- `GET /vendors` - Available documentation sources
-- `GET /stats-comprehensive` - System statistics
-- `GET /health` - Health check
+### Standard RAG
+```
+POST   /ask                    # Basic Q&A
+POST   /ask-advanced           # Enhanced RAG
+POST   /ask-multi-source       # Cross-framework
+POST   /howto                  # Tutorial generation
+GET    /vendors                # Available frameworks
+GET    /stats-comprehensive    # System stats
+GET    /health                 # Health check
+```
+
+### Agent System (v3.0)
+```
+POST   /agent/ask              # Agentic query with tools
+POST   /agent/stream           # SSE streaming
+GET    /agent/conversations/{id}
+DELETE /agent/conversations/{id}
+```
+
+**API Docs**: http://localhost:8000/docs
+
+---
 
 ## 🎨 Frontend Features
 
-### Smart Query Routing
-The frontend automatically analyzes queries and routes to the optimal endpoint:
-- Tutorial mode toggle for step-by-step guides
-- Automatic vendor detection (PyTorch, TensorFlow, etc.)
-- Intent classification (how-to, conceptual, comparison)
-- Query mode badges showing active features
+- **Smart Query Routing**: Client-side analysis picks optimal backend mode
+- **Interactive Tutorials**: Collapsible steps with floating navigator
+- **Code Blocks**: Syntax highlighting with one-click copy
+- **Citations**: Three-level system with hover tooltips
+- **Dark/Light Mode**: Smooth theme transitions
+- **Mobile-First**: Fully responsive design
 
-### Enhanced Tutorial Interface
-- **Floating Step Navigator**: Desktop sidebar with progress tracking
-- **Collapsible Steps**: Clean, organized content hierarchy
-- **Interactive Code Blocks**: Syntax highlighting + copy buttons
-- **Visual Callouts**: Color-coded tips, warnings, info boxes
-- **Smart Citations**: Hover tooltips and consolidated references
-- **Prerequisite Checklists**: Interactive completion tracking
-- **Mobile Responsive**: Adaptive layout for all screen sizes
+---
 
 ## 📦 Deployment
 
-### Frontend (Vercel)
-1. Connect repository to Vercel
-2. Set root directory to `packages/web`
-3. Add environment variable:
-   ```
-   NEXT_PUBLIC_API_URL=https://your-backend-url.railway.app
-   ```
+### Frontend → Vercel
 
-### Backend (Railway)
-1. Deploy from `packages/api` directory
-2. Add environment variables:
-   ```
-   GOOGLE_PROJECT_ID=your-gcp-project
-   GOOGLE_LOCATION=us-central1
-   GOOGLE_APPLICATION_CREDENTIALS=/path/to/credentials.json
-   QDRANT_URL=https://your-cluster.qdrant.io
-   QDRANT_API_KEY=your-api-key
-   CORS_ORIGINS=https://your-frontend.vercel.app
-   ```
-3. Run ingestion to populate database
+1. Connect repo to Vercel
+2. Set root directory: `packages/web`
+3. Add env var: `NEXT_PUBLIC_API_URL=https://your-backend.railway.app`
 
-See `packages/api/RAILWAY_DEPLOYMENT.md` for detailed deployment guide.
+### Backend → Railway
+
+1. Deploy from `packages/api`
+2. Add environment variables (see `.env.example`)
+3. Run `python -m ingest.main` post-deploy to populate database
+
+**See**: `packages/api/RAILWAY_DEPLOYMENT.md` for detailed guide.
+
+---
 
 ## 🛠️ Development
 
 ### Project Commands
 
 ```bash
-# Root level
-pnpm install              # Install all dependencies
+# Root
+pnpm install              # Install all deps
 
 # Frontend (packages/web)
-pnpm dev                  # Start dev server (localhost:3000)
+pnpm dev                  # Dev server (localhost:3000)
 pnpm build                # Production build
-pnpm lint                 # ESLint check
+pnpm lint                 # ESLint
 
 # Backend (packages/api)
-uvicorn api.main:app --reload  # Start dev server (localhost:8000)
-python -m ingest.main          # Run data ingestion
+uvicorn api.main:app --reload    # Dev server (localhost:8000)
+python -m ingest.main            # Run ingestion
+python run_tests.py              # Run test suite
 ```
 
 ### Adding Documentation Sources
@@ -227,58 +209,116 @@ sources:
     enabled: true
 ```
 
-Then rerun ingestion:
-```bash
-python -m ingest.main
-```
+Then run: `python -m ingest.main`
 
-## 🎯 Key Differentiators
-
-- ✅ **No LangChain**: Custom RAG implementation for full control
-- ✅ **Smart Frontend**: Client-side query analysis reduces backend load
-- ✅ **Modern UI**: 10+ major UI/UX improvements
-- ✅ **Production-Ready**: Docker, cloud deployment, comprehensive docs
-- ✅ **Type-Safe**: Full TypeScript on frontend, Pydantic on backend
+---
 
 ## 📊 Performance
 
 | Metric | Value |
 |--------|-------|
-| Query Latency | 1-10s (mode-dependent) |
-| Retrieval Precision | ~75-85% |
-| Concurrent Users | 10-50 |
+| Query Latency (Standard) | 1-2s |
+| Query Latency (Agent) | 2-12s |
+| Retrieval Precision | 75-85% |
+| Cost per Query | $0.001-$0.01 |
 | Bundle Size | ~450KB gzipped |
+| Concurrent Users | 10-50 |
 | Storage | 500MB-2GB |
+
+---
+
+## 🗺️ Project Status
+
+### ✅ Production-Ready
+- Multi-mode RAG system with hybrid search
+- Modern Next.js frontend with 10+ UI/UX improvements
+- Tutorial generation with step-by-step guides
+- Cross-framework comparisons
+- Docker support
+
+### 🚧 Beta (Agent v3.0)
+- LangGraph orchestration (core complete)
+- Tool integration (doc search, web, code execution)
+- Conversation memory & cost tracking
+- State checkpointing
+- API endpoints & SSE streaming
+
+### 📋 Planned
+- Specialized agents (debug, tutorial)
+- Self-reflection for quality
+- Comprehensive evaluation suite
+- Multi-agent collaboration
+
+---
 
 ## 📚 Documentation
 
-- **Frontend README**: `packages/web/README.md`
-- **Backend README**: `packages/api/README.md`
-- **Deployment Guide**: `packages/api/RAILWAY_DEPLOYMENT.md`
-- **Production Considerations**: `packages/api/PRODUCTION_CONSIDERATIONS.md`
-- **UI/UX Improvements**: `packages/web/UI_UX_IMPROVEMENTS.md`
+- **Agent System**: [`packages/api/agent/README.md`](packages/api/agent/README.md)
+- **Frontend Guide**: [`packages/web/README.md`](packages/web/README.md)
+- **Deployment**: [`packages/api/RAILWAY_DEPLOYMENT.md`](packages/api/RAILWAY_DEPLOYMENT.md)
+- **Testing**: [`packages/api/TESTING_QUICK_REFERENCE.md`](packages/api/TESTING_QUICK_REFERENCE.md)
+- **API Usage**: [`packages/api/API_USAGE_GUIDE.md`](packages/api/API_USAGE_GUIDE.md)
+
+---
+
+## 🎯 Key Differentiators
+
+| Feature | Benefit |
+|---------|---------|
+| **No LangChain for RAG** | Full control, custom optimizations |
+| **Client-Side Intelligence** | Reduced backend load |
+| **Hybrid Architecture** | Classic RAG + agentic capabilities |
+| **Production UX** | Tutorial mode, code highlighting, responsive |
+| **Cost-Aware** | Built-in budget tracking |
+| **Type-Safe** | TypeScript + Pydantic |
+
+---
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
-4. Test both frontend and backend
-5. Commit changes (`git commit -m 'Add amazing feature'`)
-6. Push to branch (`git push origin feature/amazing-feature`)
-7. Open a Pull Request
-
-## 📄 License
-
-[Specify your license here]
-
-## 🆘 Support
-
-For issues and questions:
-- Check the documentation in individual package READMEs
-- Review API logs and error messages
-- Open an issue with detailed reproduction steps
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Make changes and test
+4. Commit (`git commit -m 'Add amazing feature'`)
+5. Push (`git push origin feature/amazing-feature`)
+6. Open Pull Request
 
 ---
 
-**Built with ❤️ using Next.js, FastAPI, and Google Vertex AI**
+## 📄 License
+
+[Specify your license]
+
+---
+
+## 🆘 Troubleshooting
+
+<details>
+<summary><strong>ModuleNotFoundError: No module named 'langchain_google_vertexai'</strong></summary>
+
+```bash
+pip install -r requirements-api.txt
+```
+</details>
+
+<details>
+<summary><strong>Web search unavailable</strong></summary>
+
+Set `TAVILY_API_KEY` in `.env` or disable with `AGENT_ENABLE_WEB_SEARCH=false`
+</details>
+
+<details>
+<summary><strong>Budget exceeded error</strong></summary>
+
+Increase limit: `AGENT_MAX_COST_PER_SESSION=1.0` or start new conversation
+</details>
+
+<details>
+<summary><strong>CORS errors in frontend</strong></summary>
+
+Set `CORS_ORIGINS` in backend `.env` to match your frontend URL
+</details>
+
+---
+
+**Built with ❤️ using Next.js, FastAPI, LangGraph, and Google Vertex AI**
